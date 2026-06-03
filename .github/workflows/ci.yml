@@ -31,4 +31,6 @@ jobs:
           python examples/modern_gallery.py
           python examples/before_after.py
           python examples/scientific_gallery.py
+          python examples/showcase_gallery.py
+          python examples/advanced_gallery.py
           python examples/rich_gallery.py
