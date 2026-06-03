@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "paperfig"
+version = "0.1.0"
+description = "Publication-grade figures for scientific papers — reproducible matplotlib & TikZ, with a quality bar and composition paradigms."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "TAO-QKV" }]
+keywords = ["matplotlib", "scientific-visualization", "data-visualization",
+            "publication", "figures", "tikz"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Intended Audience :: Science/Research",
+]
+dependencies = ["matplotlib>=3.6", "numpy>=1.22"]
+
+[project.optional-dependencies]
+extras = ["pandas>=1.5", "seaborn>=0.12", "scipy>=1.8"]  # scipy only for phase_portrait
+dev = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/TAO-QKV/paper-figures"
+Repository = "https://github.com/TAO-QKV/paper-figures"
+
+[tool.setuptools]
+packages = ["paperfig"]

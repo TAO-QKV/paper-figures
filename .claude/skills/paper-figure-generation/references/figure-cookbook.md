@@ -64,9 +64,9 @@ stats_on_figure: "95% CI as error bars; N annotated per bar"
 
 ---
 
-## §0 Shared style preset (`scripts/_style.py` — the single source of truth)
+## §0 Shared style preset (`paperfig.style` — the single source of truth)
 
-The preset lives in **`scripts/_style.py`**; don't re-paste or fork it (it drifts). Its interface:
+The preset lives in the **`paperfig`** package (`paperfig/style.py`; `scripts/_style.py` is a back-compat shim). Don't re-paste or fork it (it drifts). Its interface:
 
 ```python
 from _style import paper_style, save, PALETTE, MARKERS, LINESTYLES
@@ -90,6 +90,13 @@ What the preset guarantees (so you never hand-tune rcParams per figure):
 ---
 
 ## §A Archetypes
+
+> **Two ways to use these.** Most are available as **callable functions** in the
+> installable `paperfig` package — `from paperfig import timeseries_ci, sorted_bar,
+> grouped_bar, residual_diag, heatmap, scatter_fit, pareto, tornado, confusion,
+> phase_portrait, alignment_scatter`. Each returns `(fig, ax)` so you tweak then
+> `save(fig, name)`. The code blocks below show what each does and how to customize;
+> prefer the function, drop to the snippet when you need something bespoke.
 
 ### A1 — Time series with confidence band
 
