@@ -69,14 +69,17 @@ stats_on_figure: "95% CI as error bars; N annotated per bar"
 The preset lives in the **`paperfig`** package (`paperfig/style.py`; `scripts/_style.py` is a back-compat shim). Don't re-paste or fork it (it drifts). Its interface:
 
 ```python
-from _style import paper_style, save, PALETTE, MARKERS, LINESTYLES
+from paperfig import paper_style, save, PALETTE, MARKERS, LINESTYLES
 
 # Call ONCE at the top of every figure script. font: 'sans'(default, most
 # journals' submission spec) | 'serif'(Times) | 'cn'(SimSun, Chinese papers).
+# Optional: journal='ieee'|'nature'|... for that journal's size/fonts; tex=True for LaTeX.
 PALETTE, MARKERS, LS = paper_style(font='sans')
 # ... plot ...
 save(fig, 'fig1_main_result')   # writes PDF + PNG + SVG to outputs/figures/
 ```
+
+(Pure matplotlib, no API: `import paperfig; plt.style.use('paperfig')`.)
 
 What the preset guarantees (so you never hand-tune rcParams per figure):
 - **Editable vector**: `svg.fonttype='none'`, `pdf.fonttype=42` → text stays text in SVG/PDF, fixable in Illustrator/Inkscape without re-rendering.
@@ -85,7 +88,7 @@ What the preset guarantees (so you never hand-tune rcParams per figure):
 - Soft near-black ink (not pure `#000`), top/right spines off, ticks inward, minor ticks on, subtle grid behind data, semi-opaque legend box, `axes.unicode_minus=False`.
 - Three-format export via `save()` (PDF + PNG + SVG); override with `save(fig, name, formats=('pdf',))`.
 
-> If you start a fresh project without this repo, copy `scripts/_style.py` verbatim — it *is* the preset. The archetypes below assume it is importable.
+> The base look is `paperfig/paperfig.mplstyle` (single source of truth); the archetype snippets below `from _style import …` via a back-compat shim, which forwards to `paperfig`.
 
 ---
 
@@ -127,7 +130,7 @@ plt.close(fig)
 For: ranked allocations, top-k items, sorted contributions.
 
 ```python
-df = pd.read_csv('outputs/tables/allocation.csv').sort_values('share', ascending=True)
+df = pd.read_csv('data/processed/allocation.csv').sort_values('share', ascending=True)
 fig, ax = plt.subplots(figsize=(5, max(2.5, 0.22*len(df))))
 ax.barh(df['name'], df['share'], color=PALETTE[0], edgecolor='white', linewidth=0.5)
 ax.set_xlabel('Share')
@@ -141,7 +144,7 @@ plt.close(fig)
 ### A3 — Grouped bar (multi-model comparison)
 
 ```python
-df = pd.read_csv('outputs/tables/model_metrics.csv')  # cols: model, RMSE, MAE, MAPE
+df = pd.read_csv('data/processed/model_metrics.csv')  # cols: model, RMSE, MAE, MAPE
 models = df['model'].tolist()
 metrics = ['RMSE', 'MAE', 'MAPE']
 x = np.arange(len(models)); w = 0.25
@@ -158,7 +161,7 @@ plt.close(fig)
 ### A4 — Residual plot (model diagnostic)
 
 ```python
-df = pd.read_csv('outputs/tables/residuals.csv')  # y_hat, resid
+df = pd.read_csv('data/processed/residuals.csv')  # y_hat, resid
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7, 3))
 ax1.scatter(df['y_hat'], df['resid'], s=8, color=PALETTE[0], alpha=0.6)
 ax1.axhline(0, color='k', lw=0.6, ls='--')
@@ -173,7 +176,7 @@ plt.close(fig)
 
 ```python
 import seaborn as sns
-M = pd.read_csv('outputs/tables/sens_matrix.csv', index_col=0)
+M = pd.read_csv('data/processed/sens_matrix.csv', index_col=0)
 fig, ax = plt.subplots(figsize=(5.2, 4.2))
 sns.heatmap(M, cmap='RdBu_r', center=0, annot=True, fmt='.2f',
             cbar_kws={'label': 'Relative change'}, linewidths=0.3, ax=ax,
@@ -202,7 +205,7 @@ plt.close(fig)
 ### A7 — Pareto frontier (multi-objective)
 
 ```python
-df = pd.read_csv('outputs/tables/pareto.csv')  # cols: obj1, obj2, is_pareto
+df = pd.read_csv('data/processed/pareto.csv')  # cols: obj1, obj2, is_pareto
 fig, ax = plt.subplots(figsize=(4.5, 3.5))
 ax.scatter(df.loc[~df['is_pareto'],'obj1'], df.loc[~df['is_pareto'],'obj2'],
            s=6, color='lightgray', label='Dominated')
@@ -218,7 +221,7 @@ plt.close(fig)
 ### A8 — Tornado / sensitivity ranking
 
 ```python
-df = pd.read_csv('outputs/tables/tornado.csv')  # param, low, high, base
+df = pd.read_csv('data/processed/tornado.csv')  # param, low, high, base
 df = df.assign(span=lambda d: d['high']-d['low']).sort_values('span')
 fig, ax = plt.subplots(figsize=(5.2, max(2.5, 0.3*len(df))))
 y = np.arange(len(df))
@@ -236,8 +239,8 @@ plt.close(fig)
 ```python
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
-y_true = pd.read_csv('outputs/tables/cls_true.csv')['y']
-y_pred = pd.read_csv('outputs/tables/cls_pred.csv')['y']
+y_true = pd.read_csv('data/processed/cls_true.csv')['y']
+y_pred = pd.read_csv('data/processed/cls_pred.csv')['y']
 labels = sorted(set(y_true))
 cm = confusion_matrix(y_true, y_pred, labels=labels)
 fig, ax = plt.subplots(figsize=(3.6, 3.2))
@@ -362,7 +365,7 @@ Caption: `Figure 1. (a) Raw data; (b) model fit; (c) residual diagnostics; (d) p
 Generate LaTeX tables from CSV via pandas (do NOT type-set by hand):
 
 ```python
-df = pd.read_csv('outputs/tables/model_metrics.csv')
+df = pd.read_csv('data/processed/model_metrics.csv')
 df = df.round({'RMSE': 3, 'MAE': 3, 'MAPE': 2})
 df.style.format(precision=3).hide(axis='index').to_latex(
     'paper/tables/t_metrics.tex',

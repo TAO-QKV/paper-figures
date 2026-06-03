@@ -26,6 +26,10 @@ One panel, one claim — fitted response with a 95% CI band, the fitted optimum 
 
 ![Modern gallery](examples/gallery_modern.png)
 
+**Same plotting code, only the style differs** — matplotlib defaults vs `paper_style()` ([`examples/before_after.py`](examples/before_after.py)):
+
+![Before/after](examples/gallery_before_after.png)
+
 ## Quickstart (with Claude)
 
 1. Put your data in `data/processed/your_data.csv`.
@@ -61,7 +65,15 @@ Callable archetypes: `timeseries_ci`, `sorted_bar`, `grouped_bar`, `residual_dia
 `alignment_scatter` (the P5 transfer-learning motif), and the modern distribution
 figures `violin`, `raincloud`, `ridgeline`. Each returns `(fig, ax)`.
 
-- **Journal presets** — `paper_style(journal=...)` for `nature`, `science`, `cell`, `ieee`, `pnas`, `acs`, `rsc`, `elsevier`, `aps` sets that publisher's single-column figure size + font sizes (public author-guideline specs).
+- **Journal presets** — `paper_style(journal=...)` sets that publisher's single-column figure size + font sizes:
+
+  | journal | 1-col width | journal | 1-col width | journal | 1-col width |
+  |---|---|---|---|---|---|
+  | `nature` | 89 mm | `cell` | 85 mm | `acs` | 3.33 in |
+  | `science` | 57 mm | `pnas` | 87 mm | `rsc` | 83 mm |
+  | `ieee` | 3.5 in | `elsevier` | 90 mm | `aps` | 86 mm |
+
+  (From each publisher's public author guidelines — verify against the current guidelines, specs drift.)
 - **LaTeX is optional** — figures render without a LaTeX install; opt in with `paper_style(tex=True)` for true LaTeX typography.
 
 ### Or just a matplotlib style (no API)
