@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Generated figures (keep the dir, not the artifacts)
+outputs/figures/*.pdf
+outputs/figures/*.png
+outputs/figures/*.svg
+outputs/figures/*.eps
+
+# LaTeX build (TikZ hero figures)
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

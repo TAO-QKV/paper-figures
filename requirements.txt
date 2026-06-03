@@ -1,0 +1,5 @@
+matplotlib>=3.6
+numpy>=1.22
+pandas>=1.5
+seaborn>=0.12   # heatmaps (A5/A9); optional
+scikit-learn>=1.1   # regression line in A6; optional
