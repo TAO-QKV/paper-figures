@@ -43,22 +43,42 @@ pip install -e .          # or: pip install -e ".[extras]"  for pandas/seaborn/s
 import numpy as np
 from paperfig import paper_style, save, timeseries_ci, scatter_fit, heatmap
 
-paper_style(font='sans')                 # 'sans' (default, most journals) | 'serif' | 'cn'
+paper_style(font='sans', journal='ieee')   # font: 'sans'|'serif'|'cn'; journal: None|'ieee'|'nature'|'pnas'
 
 t = np.linspace(0, 10, 50); y = 1 - np.exp(-0.3 * t)
 fig, ax = timeseries_ci(t, y + np.random.normal(0, .05, 50), y, y - .06, y + .06,
                         ylabel='Signal $y$')
-ax.set_title('My result')                # tweak the returned fig/ax freely
-save(fig, 'fig1_main_result')            # → outputs/figures/fig1_main_result.{pdf,png,svg}
+ax.set_title('My result')                  # tweak the returned fig/ax freely
+save(fig, 'fig1_main_result')              # → outputs/figures/fig1_main_result.{pdf,png,svg}
 ```
 
 Callable archetypes: `timeseries_ci`, `sorted_bar`, `grouped_bar`, `residual_diag`,
 `heatmap`, `scatter_fit`, `pareto`, `tornado`, `confusion`, `phase_portrait`,
 `alignment_scatter` (the P5 transfer-learning motif). Each returns `(fig, ax)`.
 
+- **Journal presets** — `paper_style(journal='ieee' | 'nature' | 'pnas')` sets the single-column figure size + font sizes for that journal.
+- **LaTeX is optional** — figures render without a LaTeX install; opt in with `paper_style(tex=True)` for true LaTeX typography.
+
+### Or just a matplotlib style (no API)
+
+```python
+import paperfig                 # registers the style name
+import matplotlib.pyplot as plt
+plt.style.use('paperfig')       # now any plt.* plot is publication-grade
+```
+
 ## The idea
 
 Publication-grade = the cookbook's **§0b four axes**, all true at once: **Depth** (the figure argues a mechanism) × **Elegance** (one figure, one claim) × **Unimpeachable** (carries its own uncertainty + reproducible) × **Visible gap** (reads journal-grade at a glance). Archetypes A1–A13 are the floor, not the ceiling.
+
+## Relation to SciencePlots
+
+[SciencePlots](https://github.com/garrettj403/SciencePlots) is the excellent, popular toolkit for matplotlib *styles* — and paperfig borrows its best ideas: a `plt.style.use('paperfig')` `.mplstyle`, cascading **journal presets**, and citability. The differences:
+
+- **paperfig does not require LaTeX** (SciencePlots does); LaTeX is opt-in (`tex=True`).
+- paperfig adds what a style sheet can't: a **quality bar** (§0b four axes), **hero/method-figure composition paradigms** (§I P1–P6), **callable archetype functions** (`timeseries_ci`, `alignment_scatter`, …), and **original TikZ** for method figures (§K).
+
+Think of it as: *SciencePlots-style presets, plus the judgment and building blocks to make the figure itself publication-grade.* If you only want journal styles, SciencePlots is great; if you want the figure's content held to a bar, use paperfig.
 
 ## Layout
 

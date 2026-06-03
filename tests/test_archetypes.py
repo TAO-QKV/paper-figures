@@ -61,6 +61,24 @@ def test_phase_portrait():
     assert fig is not None and ax.has_data()
 
 
+def test_journal_presets():
+    import matplotlib.pyplot as plt
+    pf.paper_style(journal="ieee")
+    assert tuple(plt.rcParams["figure.figsize"]) == (3.5, 2.6)
+    pf.paper_style(journal="nature")
+    assert plt.rcParams["font.size"] == 7
+    with pytest.raises(ValueError):
+        pf.paper_style(journal="not-a-journal")
+    pf.paper_style()  # reset
+
+
+def test_style_registered_and_tex_off():
+    import matplotlib.pyplot as plt
+    pf.paper_style()
+    assert "paperfig" in plt.style.available
+    assert plt.rcParams["text.usetex"] is False  # LaTeX not required
+
+
 def test_save_three_formats(tmp_path):
     t = np.linspace(0, 1, 10)
     fig, _ = pf.timeseries_ci(t, t, t, t - 0.1, t + 0.1)

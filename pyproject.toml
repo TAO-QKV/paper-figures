@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "paperfig"
-version = "0.1.0"
+version = "0.2.0"
 description = "Publication-grade figures for scientific papers — reproducible matplotlib & TikZ, with a quality bar and composition paradigms."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -30,3 +30,6 @@ Repository = "https://github.com/TAO-QKV/paper-figures"
 
 [tool.setuptools]
 packages = ["paperfig"]
+
+[tool.setuptools.package-data]
+paperfig = ["*.mplstyle"]

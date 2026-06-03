@@ -1,11 +1,23 @@
 """Publication-grade matplotlib style preset.
 
-    from paperfig import paper_style, save, PALETTE, MARKERS, LINESTYLES
-    PALETTE, MARKERS, LS = paper_style(font="sans")   # 'sans' | 'serif' | 'cn'
+    from paperfig import paper_style, save
+    paper_style(font="sans", journal="ieee")   # journal: None | 'ieee' | 'nature' | 'pnas'
     ...
-    save(fig, "fig1_main_result")   # PDF + PNG + SVG
+    save(fig, "fig1_main_result")               # PDF + PNG + SVG
+
+Pure-matplotlib users (no API) can also just:
+    import paperfig                              # registers the style name
+    import matplotlib.pyplot as plt
+    plt.style.use("paperfig")
+
+The base look lives in ``paperfig.mplstyle`` (single source of truth);
+``paper_style`` applies it, then layers the font family, an optional journal
+preset, and an optional LaTeX-text flag on top. Unlike SciencePlots, LaTeX is
+NOT required — it's opt-in via ``tex=True``.
 """
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+import matplotlib.style as _mstyle
 from pathlib import Path
 
 # Colorblind-safe 6-color palette (Wong-2011-derived, B&W-discriminable via marker)
@@ -13,13 +25,44 @@ PALETTE = ["#1f77b4", "#d62728", "#2ca02c", "#ff7f0e", "#9467bd", "#8c564b"]
 MARKERS = ["o", "s", "^", "D", "v", "P"]
 LINESTYLES = ["-", "--", "-.", ":", (0, (3, 1, 1, 1)), (0, (5, 1))]
 
+STYLE_PATH = Path(__file__).resolve().parent / "paperfig.mplstyle"
 
-def paper_style(font: str = "sans", chinese: bool = None):
+# Journal presets: single-column figure size + font sizes (public submission specs).
+# Borrowed in spirit from SciencePlots' cascading journal styles; values original.
+_JOURNAL = {
+    "ieee":   {"figure.figsize": (3.5, 2.6), "font.size": 8, "axes.titlesize": 8.5,
+               "axes.labelsize": 8, "xtick.labelsize": 7, "ytick.labelsize": 7,
+               "legend.fontsize": 7},
+    "nature": {"figure.figsize": (3.5, 2.7), "font.size": 7, "axes.titlesize": 8,
+               "axes.labelsize": 7, "xtick.labelsize": 6, "ytick.labelsize": 6,
+               "legend.fontsize": 6},
+    "pnas":   {"figure.figsize": (3.42, 2.6), "font.size": 8, "axes.titlesize": 8.5,
+               "axes.labelsize": 8, "xtick.labelsize": 7, "ytick.labelsize": 7,
+               "legend.fontsize": 7},
+}
+
+
+def register_style():
+    """Register the bundled style so ``plt.style.use('paperfig')`` works."""
+    try:
+        lib = _mstyle.core.read_style_directory(str(STYLE_PATH.parent))
+        _mstyle.library.update(lib)
+        _mstyle.available[:] = sorted(_mstyle.library.keys())
+    except Exception:
+        pass  # registration is a convenience; paper_style still works via path
+
+
+def paper_style(font: str = "sans", journal: str = None, tex: bool = False,
+                chinese: bool = None):
     """Apply publication-grade rcParams. Call once at the top of a figure script.
 
     Args:
-        font: 'sans' (Arial/Helvetica, most journals' submission spec; DEFAULT),
-              'serif' (Times), or 'cn' (SimSun + Times fallback, Chinese papers).
+        font: 'sans' (Arial/Helvetica, most journals' spec; DEFAULT), 'serif'
+              (Times), or 'cn' (SimSun, Chinese papers).
+        journal: None, or 'ieee' / 'nature' / 'pnas' — sets single-column figure
+              size + font sizes for that journal.
+        tex: if True, render text with LaTeX (``text.usetex``). Off by default —
+              paperfig does NOT require a LaTeX install.
         chinese: deprecated back-compat; chinese=True maps to font='cn'.
 
     Returns:
@@ -27,42 +70,27 @@ def paper_style(font: str = "sans", chinese: bool = None):
     """
     if chinese is True:
         font = "cn"
-    mpl.rcParams.update({
-        "svg.fonttype": "none", "pdf.fonttype": 42, "ps.fonttype": 42,
-        "figure.dpi": 120, "savefig.dpi": 300, "savefig.bbox": "tight",
-        "savefig.pad_inches": 0.04,
-        "figure.facecolor": "white", "savefig.facecolor": "white",
-        "font.size": 11, "axes.titlesize": 11.5, "axes.titleweight": "bold",
-        "axes.titlepad": 8, "axes.labelsize": 10.5, "axes.labelpad": 4,
-        "xtick.labelsize": 9, "ytick.labelsize": 9, "legend.fontsize": 9,
-        "axes.linewidth": 0.9,
-        "axes.edgecolor": "#3a3a3a", "axes.labelcolor": "#1a1a1a",
-        "axes.titlecolor": "#111111", "text.color": "#1a1a1a",
-        "xtick.color": "#3a3a3a", "ytick.color": "#3a3a3a",
-        "lines.linewidth": 1.7, "lines.markersize": 4.5,
-        "lines.solid_capstyle": "round", "patch.linewidth": 0.8,
-        "xtick.direction": "in", "ytick.direction": "in",
-        "xtick.major.size": 3.5, "ytick.major.size": 3.5,
-        "xtick.minor.visible": True, "ytick.minor.visible": True,
-        "xtick.minor.size": 2, "ytick.minor.size": 2,
-        "axes.spines.top": False, "axes.spines.right": False,
-        "axes.grid": True, "axes.axisbelow": True,
-        "grid.color": "#c2c2c2", "grid.alpha": 0.22, "grid.linewidth": 0.55,
-        "grid.linestyle": "-",
-        "legend.frameon": True, "legend.framealpha": 0.85,
-        "legend.facecolor": "white", "legend.edgecolor": "#cccccc",
-        "legend.fancybox": False, "legend.borderpad": 0.4,
-        "mathtext.fontset": "cm", "axes.unicode_minus": False,
-    })
+    plt.style.use(str(STYLE_PATH))  # base look (single source of truth)
+
     if font == "cn":
         mpl.rcParams["font.family"] = ["serif"]
         mpl.rcParams["font.serif"] = ["SimSun", "Times New Roman", "DejaVu Serif"]
     elif font == "serif":
         mpl.rcParams["font.family"] = ["serif"]
         mpl.rcParams["font.serif"] = ["Times New Roman", "Nimbus Roman", "DejaVu Serif"]
-    else:  # 'sans' — default, most journals' requirement
+    else:  # 'sans' — default
         mpl.rcParams["font.family"] = ["sans-serif"]
         mpl.rcParams["font.sans-serif"] = ["Arial", "Helvetica", "Nimbus Sans", "DejaVu Sans"]
+
+    if journal is not None:
+        key = journal.lower()
+        if key not in _JOURNAL:
+            raise ValueError(f"unknown journal {journal!r}; choose from {list(_JOURNAL)}")
+        mpl.rcParams.update(_JOURNAL[key])
+
+    if tex:
+        mpl.rcParams["text.usetex"] = True
+
     return PALETTE, MARKERS, LINESTYLES
 
 
