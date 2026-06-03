@@ -28,3 +28,4 @@ jobs:
           python examples/gallery.py
           python examples/archetypes_gallery.py
           python examples/paradigms_gallery.py
+          python examples/modern_gallery.py

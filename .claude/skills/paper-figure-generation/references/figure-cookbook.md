@@ -94,9 +94,12 @@ What the preset guarantees (so you never hand-tune rcParams per figure):
 > **Two ways to use these.** Most are available as **callable functions** in the
 > installable `paperfig` package — `from paperfig import timeseries_ci, sorted_bar,
 > grouped_bar, residual_diag, heatmap, scatter_fit, pareto, tornado, confusion,
-> phase_portrait, alignment_scatter`. Each returns `(fig, ax)` so you tweak then
-> `save(fig, name)`. The code blocks below show what each does and how to customize;
-> prefer the function, drop to the snippet when you need something bespoke.
+> phase_portrait, alignment_scatter` plus the modern distribution figures
+> **`violin`, `raincloud`, `ridgeline`** (groups dict in, `(fig, ax)` out). Each
+> returns `(fig, ax)` so you tweak then `save(fig, name)`. The code blocks below show
+> what each does; prefer the function, drop to the snippet when you need bespoke.
+>
+> **Journal presets**: `paper_style(journal=...)` for `nature · science · cell · ieee · pnas · acs · rsc · elsevier · aps` sets that publisher's single-column width + font sizes (public author-guideline specs — verify against current guidelines, they drift).
 
 ### A1 — Time series with confidence band
 

@@ -7,7 +7,7 @@ abstract: >-
   journal style presets. LaTeX optional.
 authors:
   - alias: TAO-QKV
-version: 0.2.0
+version: 0.3.0
 license: MIT
 repository-code: "https://github.com/TAO-QKV/paper-figures"
 keywords:

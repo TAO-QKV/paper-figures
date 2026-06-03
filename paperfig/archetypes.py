@@ -212,6 +212,84 @@ def alignment_scatter(source_xy, target_xy, aligned_target_xy=None, *,
     return fig, axes
 
 
+def violin(groups: dict, *, ylabel="Value", showmeans=True,
+           figsize=(5.6, 3.4), ax=None):
+    """Modern distribution comparison — violins with medians/means.
+
+    groups: {label: 1-D values}. (Popular in current bio/ML papers.)
+    """
+    fig, ax = _fig(ax, figsize)
+    labels = list(groups); data = [np.asarray(groups[k], float) for k in labels]
+    vp = ax.violinplot(data, showmeans=showmeans, showextrema=False)
+    for i, b in enumerate(vp["bodies"]):
+        b.set_facecolor(PALETTE[i % len(PALETTE)]); b.set_alpha(0.45)
+        b.set_edgecolor(PALETTE[i % len(PALETTE)])
+    if showmeans and "cmeans" in vp:
+        vp["cmeans"].set_color("#222"); vp["cmeans"].set_linewidth(1.2)
+    ax.set_xticks(range(1, len(labels) + 1)); ax.set_xticklabels(labels)
+    ax.set_ylabel(ylabel)
+    return fig, ax
+
+
+def raincloud(groups: dict, *, ylabel="Value", figsize=(5.8, 3.6), ax=None):
+    """Raincloud plot: half-violin (cloud) + jittered points (rain) + box.
+
+    groups: {label: 1-D values}. The de-facto modern distribution figure.
+    """
+    fig, ax = _fig(ax, figsize)
+    labels = list(groups)
+    rng = np.random.default_rng(0)
+    for i, k in enumerate(labels):
+        v = np.asarray(groups[k], float)
+        c = PALETTE[i % len(PALETTE)]
+        xs, dens = _kde(v)
+        dens = dens / dens.max() * 0.36
+        ax.fill_betweenx(xs, i, i + dens, color=c, alpha=0.4, lw=0)   # cloud (right)
+        ax.scatter(i - 0.18 + rng.uniform(-0.06, 0.06, v.size), v, s=6,
+                   color=c, alpha=0.5, edgecolor="none")               # rain (left)
+        bp = ax.boxplot(v, positions=[i - 0.02], widths=0.06, vert=True,
+                        patch_artist=True, showfliers=False,
+                        medianprops=dict(color="#222"))
+        for box in bp["boxes"]:
+            box.set(facecolor="white", edgecolor=c, alpha=0.9)
+    ax.set_xticks(range(len(labels))); ax.set_xticklabels(labels)
+    ax.set_ylabel(ylabel); ax.grid(axis="x", visible=False)
+    return fig, ax
+
+
+def ridgeline(groups: dict, *, xlabel="Value", overlap=0.7, figsize=(5.6, 4.2), ax=None):
+    """Ridgeline / joyplot: stacked offset densities (one row per group)."""
+    fig, ax = _fig(ax, figsize)
+    labels = list(groups); n = len(labels)
+    allv = np.concatenate([np.asarray(groups[k], float) for k in labels])
+    grid = np.linspace(allv.min(), allv.max(), 200)
+    for i, k in enumerate(reversed(labels)):
+        v = np.asarray(groups[k], float)
+        _, dens = _kde(v, grid=grid)
+        dens = dens / dens.max()
+        base = i * (1 - overlap)
+        c = PALETTE[(n - 1 - i) % len(PALETTE)]
+        ax.fill_between(grid, base, base + dens, color=c, alpha=0.55, lw=0.8,
+                        edgecolor="white", zorder=n - i)
+        ax.text(grid[0], base + 0.05, list(reversed(labels))[i], fontsize=8, va="bottom")
+    ax.set_yticks([]); ax.set_xlabel(xlabel); ax.grid(axis="y", visible=False)
+    ax.spines["left"].set_visible(False)
+    return fig, ax
+
+
+def _kde(v, grid=None, n=200):
+    """Tiny Gaussian KDE (Silverman bandwidth), numpy-only (no scipy)."""
+    v = np.asarray(v, float)
+    if grid is None:
+        pad = 0.1 * (v.max() - v.min() + 1e-9)
+        grid = np.linspace(v.min() - pad, v.max() + pad, n)
+    sigma = v.std(ddof=1) if v.size > 1 else 1.0
+    h = 1.06 * sigma * v.size ** (-1 / 5) + 1e-9          # Silverman's rule
+    u = (grid[:, None] - v[None, :]) / h
+    dens = np.exp(-0.5 * u ** 2).sum(axis=1) / (v.size * h * np.sqrt(2 * np.pi))
+    return grid, dens
+
+
 def _fig(ax, figsize):
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)

@@ -16,17 +16,18 @@ from .style import (
 from .archetypes import (
     timeseries_ci, sorted_bar, grouped_bar, residual_diag, heatmap,
     scatter_fit, pareto, tornado, confusion, phase_portrait, alignment_scatter,
+    violin, raincloud, ridgeline,
 )
 
 # Register the bundled style on import so `plt.style.use("paperfig")` works
 # for pure-matplotlib users who don't want the paper_style() API.
 register_style()
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __all__ = [
     "paper_style", "save", "register_style", "STYLE_PATH",
     "PALETTE", "MARKERS", "LINESTYLES",
     "timeseries_ci", "sorted_bar", "grouped_bar", "residual_diag", "heatmap",
     "scatter_fit", "pareto", "tornado", "confusion", "phase_portrait",
-    "alignment_scatter",
+    "alignment_scatter", "violin", "raincloud", "ridgeline",
 ]

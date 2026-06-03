@@ -64,12 +64,23 @@ def test_phase_portrait():
 def test_journal_presets():
     import matplotlib.pyplot as plt
     pf.paper_style(journal="ieee")
-    assert tuple(plt.rcParams["figure.figsize"]) == (3.5, 2.6)
+    assert plt.rcParams["figure.figsize"][0] == 3.5          # 1-column width
     pf.paper_style(journal="nature")
     assert plt.rcParams["font.size"] == 7
+    pf.paper_style(journal="science")
+    assert plt.rcParams["figure.figsize"][0] < 2.5           # Science is narrow
+    assert len(pf.style._JOURNAL) >= 9                        # nine journals
     with pytest.raises(ValueError):
         pf.paper_style(journal="not-a-journal")
     pf.paper_style()  # reset
+
+
+def test_modern_archetypes():
+    import numpy as np
+    g = {"a": RNG.normal(0, 1, 80), "b": RNG.normal(1, 1, 80), "c": RNG.normal(2, 0.8, 80)}
+    for fn in (pf.violin, pf.raincloud, pf.ridgeline):
+        fig, ax = fn(g)
+        assert fig is not None and ax.has_data()
 
 
 def test_style_registered_and_tex_off():

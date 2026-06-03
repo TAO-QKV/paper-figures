@@ -22,6 +22,10 @@ One panel, one claim — fitted response with a 95% CI band, the fitted optimum 
 
 ![Paradigm gallery](examples/gallery_paradigms.png)
 
+**Modern distribution figures** — `raincloud`, `violin`, `ridgeline`, the distributions current bio/ML/physics papers use ([`examples/modern_gallery.py`](examples/modern_gallery.py)):
+
+![Modern gallery](examples/gallery_modern.png)
+
 ## Quickstart (with Claude)
 
 1. Put your data in `data/processed/your_data.csv`.
@@ -54,9 +58,10 @@ save(fig, 'fig1_main_result')              # → outputs/figures/fig1_main_resul
 
 Callable archetypes: `timeseries_ci`, `sorted_bar`, `grouped_bar`, `residual_diag`,
 `heatmap`, `scatter_fit`, `pareto`, `tornado`, `confusion`, `phase_portrait`,
-`alignment_scatter` (the P5 transfer-learning motif). Each returns `(fig, ax)`.
+`alignment_scatter` (the P5 transfer-learning motif), and the modern distribution
+figures `violin`, `raincloud`, `ridgeline`. Each returns `(fig, ax)`.
 
-- **Journal presets** — `paper_style(journal='ieee' | 'nature' | 'pnas')` sets the single-column figure size + font sizes for that journal.
+- **Journal presets** — `paper_style(journal=...)` for `nature`, `science`, `cell`, `ieee`, `pnas`, `acs`, `rsc`, `elsevier`, `aps` sets that publisher's single-column figure size + font sizes (public author-guideline specs).
 - **LaTeX is optional** — figures render without a LaTeX install; opt in with `paper_style(tex=True)` for true LaTeX typography.
 
 ### Or just a matplotlib style (no API)

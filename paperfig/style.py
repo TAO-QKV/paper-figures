@@ -27,19 +27,34 @@ LINESTYLES = ["-", "--", "-.", ":", (0, (3, 1, 1, 1)), (0, (5, 1))]
 
 STYLE_PATH = Path(__file__).resolve().parent / "paperfig.mplstyle"
 
-# Journal presets: single-column figure size + font sizes (public submission specs).
-# Borrowed in spirit from SciencePlots' cascading journal styles; values original.
-_JOURNAL = {
-    "ieee":   {"figure.figsize": (3.5, 2.6), "font.size": 8, "axes.titlesize": 8.5,
-               "axes.labelsize": 8, "xtick.labelsize": 7, "ytick.labelsize": 7,
-               "legend.fontsize": 7},
-    "nature": {"figure.figsize": (3.5, 2.7), "font.size": 7, "axes.titlesize": 8,
-               "axes.labelsize": 7, "xtick.labelsize": 6, "ytick.labelsize": 6,
-               "legend.fontsize": 6},
-    "pnas":   {"figure.figsize": (3.42, 2.6), "font.size": 8, "axes.titlesize": 8.5,
-               "axes.labelsize": 8, "xtick.labelsize": 7, "ytick.labelsize": 7,
-               "legend.fontsize": 7},
+# Journal presets: single-column figure WIDTH (inches) + base font size, from each
+# publisher's public author guidelines. Verify against the *current* guidelines for
+# your target journal — specs drift. (width_in, base_font_pt)
+_JOURNAL_SPEC = {
+    "nature":   (3.50, 7),   # 89 mm single column
+    "science":  (2.24, 7),   # 5.7 cm single column (narrow)
+    "cell":     (3.35, 7),   # 85 mm
+    "ieee":     (3.50, 8),   # 88.9 mm (3.5 in)
+    "pnas":     (3.42, 8),   # 87 mm
+    "acs":      (3.33, 8),   # 3.33 in
+    "rsc":      (3.27, 8),   # 8.3 cm
+    "elsevier": (3.54, 8),   # 90 mm
+    "aps":      (3.39, 8),   # 8.6 cm (PRL/PRB single column)
 }
+
+
+def _journal_rc(width_in, base):
+    """Build rcParams for a single-column figure of the given width + base font."""
+    return {
+        "figure.figsize": (width_in, round(width_in * 0.74, 2)),
+        "font.size": base, "axes.titlesize": base + 0.5, "axes.labelsize": base,
+        "xtick.labelsize": base - 1, "ytick.labelsize": base - 1,
+        "legend.fontsize": base - 1,
+        "lines.linewidth": 1.3, "lines.markersize": 3.5, "axes.linewidth": 0.7,
+    }
+
+
+_JOURNAL = {k: _journal_rc(w, b) for k, (w, b) in _JOURNAL_SPEC.items()}
 
 
 def register_style():
