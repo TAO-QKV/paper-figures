@@ -26,6 +26,14 @@ One panel, one claim — fitted response with a 95% CI band, the fitted optimum 
 
 ![Modern gallery](examples/gallery_modern.png)
 
+**Extended scientific charts** across ML, statistics, omics, medical, and physics ([`examples/scientific_gallery.py`](examples/scientific_gallery.py)):
+
+![Scientific gallery](examples/gallery_scientific.png)
+
+**Richer multi-axes figures** — jointplot (scatter + marginals), radar, slopegraph ([`examples/rich_gallery.py`](examples/rich_gallery.py)):
+
+![Rich gallery](examples/gallery_rich.png)
+
 **Same plotting code, only the style differs** — matplotlib defaults vs `paper_style()` ([`examples/before_after.py`](examples/before_after.py)):
 
 ![Before/after](examples/gallery_before_after.png)
@@ -60,10 +68,17 @@ ax.set_title('My result')                  # tweak the returned fig/ax freely
 save(fig, 'fig1_main_result')              # → outputs/figures/fig1_main_result.{pdf,png,svg}
 ```
 
-Callable archetypes: `timeseries_ci`, `sorted_bar`, `grouped_bar`, `residual_diag`,
-`heatmap`, `scatter_fit`, `pareto`, `tornado`, `confusion`, `phase_portrait`,
-`alignment_scatter` (the P5 transfer-learning motif), and the modern distribution
-figures `violin`, `raincloud`, `ridgeline`. Each returns `(fig, ax)`.
+**29 callable chart types**, each returning `(fig, ax)`:
+
+| Domain | Functions |
+|---|---|
+| core | `timeseries_ci`, `sorted_bar`, `grouped_bar`, `scatter_fit`, `heatmap`, `pareto`, `tornado` |
+| distributions | `violin`, `raincloud`, `ridgeline`, `box`, `ecdf`, `qq`, `jointplot`, `hexbin_density` |
+| ML / diagnostics | `roc_curve`, `calibration`, `confusion`, `residual_diag` |
+| stats / comparison | `bar_err` (+ significance brackets), `forest`, `bland_altman`, `slopegraph`, `radar` |
+| omics / medical | `volcano`, `survival` (Kaplan-Meier) |
+| fields / dynamics | `contour_field`, `phase_portrait` |
+| transfer / method | `alignment_scatter` (P5 motif) |
 
 - **Journal presets** — `paper_style(journal=...)` sets that publisher's single-column figure size + font sizes:
 

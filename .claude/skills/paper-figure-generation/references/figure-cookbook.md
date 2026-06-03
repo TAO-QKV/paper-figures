@@ -94,13 +94,17 @@ What the preset guarantees (so you never hand-tune rcParams per figure):
 
 ## §A Archetypes
 
-> **Two ways to use these.** Most are available as **callable functions** in the
-> installable `paperfig` package — `from paperfig import timeseries_ci, sorted_bar,
-> grouped_bar, residual_diag, heatmap, scatter_fit, pareto, tornado, confusion,
-> phase_portrait, alignment_scatter` plus the modern distribution figures
-> **`violin`, `raincloud`, `ridgeline`** (groups dict in, `(fig, ax)` out). Each
-> returns `(fig, ax)` so you tweak then `save(fig, name)`. The code blocks below show
-> what each does; prefer the function, drop to the snippet when you need bespoke.
+> **Two ways to use these.** The toolkit ships **29 callable functions** in the
+> installable `paperfig` package; each returns `(fig, ax)` so you tweak then
+> `save(fig, name)`. Prefer the function; drop to a snippet for something bespoke.
+> - **core**: `timeseries_ci`, `sorted_bar`, `grouped_bar`, `scatter_fit`, `heatmap`, `pareto`, `tornado`
+> - **distributions**: `violin`, `raincloud`, `ridgeline`, `box`, `ecdf`, `qq`, `jointplot`, `hexbin_density`
+> - **ML / diagnostics**: `roc_curve`, `calibration`, `confusion`, `residual_diag`
+> - **stats / comparison**: `bar_err` (+significance brackets), `forest`, `bland_altman`, `slopegraph`, `radar`
+> - **omics / medical**: `volcano`, `survival` (Kaplan-Meier)
+> - **fields / dynamics**: `contour_field`, `phase_portrait`
+> - **transfer / method**: `alignment_scatter` (P5 motif)
+> The A1–A13 code blocks below show the core ones in full; the rest live in `paperfig.scientific`.
 >
 > **Journal presets**: `paper_style(journal=...)` for `nature · science · cell · ieee · pnas · acs · rsc · elsevier · aps` sets that publisher's single-column width + font sizes (public author-guideline specs — verify against current guidelines, they drift).
 
