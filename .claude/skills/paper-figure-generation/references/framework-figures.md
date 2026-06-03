@@ -19,13 +19,17 @@ imitate** and **two complete, compilable worked heroes** to paste from.
 
 ## Worked heroes in this repo (paste these, swap the content)
 
-Two complete `standalone` TikZ figures — `pdflatex <file>.tex` → PDF →
-`\includegraphics`, zero compile risk to the main document:
+Five complete `standalone` TikZ figures — `pdflatex <file>.tex` → PDF →
+`\includegraphics`, zero compile risk to the main document. The first two are
+composition paradigms (§I); the last three are the T4 technique families:
 
-| File | Paradigm (§I) | When to use |
+| File | Shape | When to use |
 |---|---|---|
 | [`examples/hero_tikz/pipeline_hero.tex`](../../../../examples/hero_tikz/pipeline_hero.tex) | **P1** pipeline-with-hero | a clear input→stages→output backbone, one stage is the contribution |
 | [`examples/hero_tikz/framework_hero.tex`](../../../../examples/hero_tikz/framework_hero.tex) | **P2** paradigm swimlanes | two paradigms fused (mechanistic + data-driven / source + target), the bridge is the contribution — the most common 数模/method-paper framework shape |
+| [`examples/hero_tikz/graphical_model_hero.tex`](../../../../examples/hero_tikz/graphical_model_hero.tex) | **T4a** graphical model (`bayesnet`) | the contribution is a generative / hierarchical-Bayesian structure (latent vs observed, plates) |
+| [`examples/hero_tikz/tensor_framework_hero.tex`](../../../../examples/hero_tikz/tensor_framework_hero.tex) | **T4b** data tensor (3-D block) | the object is a 3-D array that is factorized / completed (spatiotemporal, multi-sensor) |
+| [`examples/hero_tikz/matrix_layout_hero.tex`](../../../../examples/hero_tikz/matrix_layout_hero.tex) | **T4c** matrix+fit map | a dense multi-stage method you want as one aligned "structure + result" overview |
 
 `framework_hero.tex` is the reference implementation of the three techniques below
 + the §0b axis-1 rule: each lane embeds a **real method object** (a degradation
@@ -85,14 +89,25 @@ instead of forcing it into boxes:
   `\node[obs]`, `\factor`, `\plate{}{}{}` give latent vs observed variables, factors,
   and **plates** (repetition over `N`). The right tool when the contribution is a
   generative/Bayesian structure, not a pipeline.
-- **`tikz-3dplot` + `\newcommand{\Depth/\Width/\Height}`** — draw a **data tensor / 3-D
-  block** as a framework input or stage (partially-observed matrices, tensor
-  factorization). Parametrize the box dims once, reuse for every block.
+- **Parametrized 3-D block** — draw a **data tensor** as a framework input/stage
+  (partially-observed array, tensor factorization). A plain-TikZ parallelepiped with
+  the dims as `\newcommand`s (reused per block) is the robust route; `tikz-3dplot`
+  generalizes it to arbitrary camera rotation. (Note: `\W`/`\H` are LaTeX accents —
+  use a prefix like `\tW`/`\tH`.)
 - **`\matrix` + `\usetikzlibrary{fit,calc}`** — lay framework components on an aligned
   grid, then `fit` a labelled box around a group (cleaner than manual `positioning` for
   a dense, multi-component framework — see their Example 25).
 
 All open directly on Overleaf — read the source, redraw original.
+
+**Each family has a compilable worked example in this repo** (paste, swap the content):
+`graphical_model_hero.tex` (bayesnet), `tensor_framework_hero.tex` (3-D block),
+`matrix_layout_hero.tex` (matrix+fit). All three carry a *real* object — a plate
+structure, a partially-observed tensor, a result-bearing grid — not empty boxes:
+
+| graphical model (T4a) | data tensor (T4b) | matrix+fit map (T4c) |
+|---|---|---|
+| ![graphical model](../../../../examples/hero_tikz/graphical_model_hero.png) | ![data tensor](../../../../examples/hero_tikz/tensor_framework_hero.png) | ![matrix+fit map](../../../../examples/hero_tikz/matrix_layout_hero.png) |
 
 ---
 

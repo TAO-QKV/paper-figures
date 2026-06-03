@@ -115,7 +115,7 @@ Think of it as: *SciencePlots-style presets, plus the judgment and building bloc
 | Path | What |
 |---|---|
 | `paperfig/` | the installable package: `style.py` (preset) + `archetypes.py` (callable A1–A10 + P5) |
-| `examples/` | runnable galleries (`complex_panels.py`, `showcase_gallery.py`, `coverage_gallery.py`, `domain_showcases.py`, `scientific_gallery.py`, `advanced_gallery.py`, `archetypes_gallery.py`, `paradigms_gallery.py`) + two complete compilable TikZ framework heroes (`hero_tikz/pipeline_hero.tex` = §I-P1, `hero_tikz/framework_hero.tex` = §I-P2 paradigm swimlanes) |
+| `examples/` | runnable galleries (`complex_panels.py`, `showcase_gallery.py`, `coverage_gallery.py`, `domain_showcases.py`, `scientific_gallery.py`, `advanced_gallery.py`, `archetypes_gallery.py`, `paradigms_gallery.py`) + five complete compilable TikZ framework heroes (`hero_tikz/`: P1 pipeline, P2 swimlanes, + T4 graphical-model / data-tensor / matrix-fit families) |
 | `tests/` | pytest smoke tests (every archetype + three-format `save`) |
 | `.claude/skills/paper-figure-generation/SKILL.md` | the Claude skill (triggers, hard rules) |
 | `.../references/figure-cookbook.md` | **main reference**: §0b quality bar · §0a contract · §0 style · §A archetypes A1–A13 · §I composition paradigms P1–P6 · §J craft spec · §K original TikZ · §L external template library · §M Origin front-end |
