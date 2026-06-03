@@ -20,15 +20,15 @@ from .archetypes import (
 )
 from .scientific import (
     roc_curve, calibration, ecdf, box, bar_err, qq, volcano, survival,
-    forest, bland_altman, contour_field, hexbin_density, jointplot, radar,
-    slopegraph,
+    manhattan, forest, bland_altman, contour_field, hexbin_density,
+    streamplot_field, surface3d, jointplot, radar, slopegraph, sankey,
 )
 
 # Register the bundled style on import so `plt.style.use("paperfig")` works
 # for pure-matplotlib users who don't want the paper_style() API.
 register_style()
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 __all__ = [
     "paper_style", "save", "register_style", "STYLE_PATH",
     "PALETTE", "MARKERS", "LINESTYLES",
@@ -36,6 +36,7 @@ __all__ = [
     "scatter_fit", "pareto", "tornado", "confusion", "phase_portrait",
     "alignment_scatter", "violin", "raincloud", "ridgeline",
     "roc_curve", "calibration", "ecdf", "box", "bar_err", "qq", "volcano",
-    "survival", "forest", "bland_altman", "contour_field", "hexbin_density",
-    "jointplot", "radar", "slopegraph",
+    "survival", "manhattan", "forest", "bland_altman", "contour_field",
+    "hexbin_density", "streamplot_field", "surface3d", "jointplot", "radar",
+    "slopegraph", "sankey",
 ]

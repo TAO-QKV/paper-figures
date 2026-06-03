@@ -26,6 +26,11 @@ def test_stats_charts():
 def test_omics_medical():
     fig, ax = pf.volcano(RNG.normal(0, 2, 200), 10 ** (-RNG.random(200) * 5))
     assert fig and ax.has_data()
+    chrom = np.repeat(np.arange(1, 5), 40)
+    pos = np.tile(np.arange(40), 4)
+    pvals = 10 ** (-RNG.random(160) * 7)
+    fig, ax = pf.manhattan(chrom, pos, pvals, top=2)
+    assert fig and ax.has_data()
     fig, ax = pf.survival({"A": (RNG.exponential(5, 60), (RNG.random(60) > 0.3).astype(int))})
     assert fig and ax.has_data()
     fig, ax = pf.forest(["s1", "s2"], [0.2, -0.1], [0.0, -0.3], [0.4, 0.1])
@@ -39,6 +44,9 @@ def test_fields_and_density():
     fig, ax = pf.contour_field(X, Y, np.exp(-(X ** 2 + Y ** 2))); assert fig and ax.has_data()
     fig, ax = pf.hexbin_density(RNG.normal(0, 1, 800), RNG.normal(0, 1, 800))
     assert fig and ax.has_data()
+    U, V = -Y, X
+    fig, ax = pf.streamplot_field(X, Y, U, V); assert fig and ax.has_data()
+    fig, ax = pf.surface3d(X, Y, np.sin(X) * np.cos(Y)); assert fig and ax.name == "3d"
 
 
 def test_rich_multiaxes():
@@ -46,6 +54,8 @@ def test_rich_multiaxes():
     assert fig is not None and len(axes) == 3
     fig, ax = pf.radar({"m": [0.8, 0.6, 0.9]}, ["a", "b", "c"]); assert fig is not None
     fig, ax = pf.slopegraph([1, 2], [2, 1], ["p", "q"]); assert fig and ax.has_data()
+    fig, ax = pf.sankey([10, -5, -3, -2], ["input", "A", "B", "C"])
+    assert fig is not None and len(ax.texts) > 0
 
 
 def test_roc_auc_perfect():

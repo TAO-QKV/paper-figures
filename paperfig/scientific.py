@@ -160,6 +160,61 @@ def volcano(log2fc, pvals, *, fc_thresh=1.0, p_thresh=0.05, labels=None, top=0,
     return fig, ax
 
 
+def manhattan(chrom, pos, pvals, *, genomewide=5e-8, suggestive=1e-5,
+              labels=None, top=0, figsize=(6.4, 3.8), ax=None):
+    """Manhattan plot for genome-wide association signals."""
+    chrom = np.asarray(chrom)
+    pos = np.asarray(pos, float)
+    pv = np.asarray(pvals, float)
+    if not (chrom.size == pos.size == pv.size):
+        raise ValueError("chrom, pos, and pvals must have the same length")
+    if chrom.size == 0:
+        raise ValueError("manhattan requires at least one point")
+
+    def _chrom_key(value):
+        try:
+            return (0, int(value))
+        except (TypeError, ValueError):
+            return (1, str(value))
+
+    chroms = sorted(dict.fromkeys(chrom.tolist()), key=_chrom_key)
+    x = np.zeros(chrom.size, dtype=float)
+    ticks, ticklabels, offset = [], [], 0.0
+    fig, ax = _fig(ax, figsize)
+
+    for i, c in enumerate(chroms):
+        idx = np.where(chrom == c)[0]
+        idx = idx[np.argsort(pos[idx])]
+        p = pos[idx]
+        span = float(p.max() - p.min()) if p.size > 1 else 1.0
+        gap = max(span * 0.03, 1.0)
+        x[idx] = offset + (p - p.min())
+        ticks.append(offset + span / 2)
+        ticklabels.append(str(c))
+        y = -np.log10(np.clip(pv[idx], 1e-300, 1.0))
+        ax.scatter(x[idx], y, s=7, color=PALETTE[i % 2], alpha=0.72,
+                   edgecolor="none")
+        offset += span + gap
+
+    y_all = -np.log10(np.clip(pv, 1e-300, 1.0))
+    if suggestive is not None:
+        ax.axhline(-np.log10(suggestive), color="#888", lw=0.7, ls=":",
+                   label=f"suggestive {suggestive:g}")
+    if genomewide is not None:
+        ax.axhline(-np.log10(genomewide), color=PALETTE[1], lw=0.9, ls="--",
+                   label=f"genome-wide {genomewide:g}")
+    if labels is not None and top:
+        labels = np.asarray(labels)
+        for i in np.argsort(-y_all)[:top]:
+            ax.annotate(str(labels[i]), (x[i], y_all[i]), fontsize=7,
+                        xytext=(3, 3), textcoords="offset points")
+    ax.set_xticks(ticks); ax.set_xticklabels(ticklabels)
+    ax.set_xlabel("Chromosome"); ax.set_ylabel(r"$-\log_{10}\,p$")
+    ax.set_xlim(x.min() - 1, x.max() + 1)
+    ax.legend(loc="upper right", fontsize=7)
+    return fig, ax
+
+
 # ============================ medical ============================
 
 def survival(groups, *, xlabel="Time", figsize=(5, 3.6), ax=None):
@@ -237,6 +292,54 @@ def hexbin_density(x, y, *, xlabel="$x$", ylabel="$y$", gridsize=30,
     return fig, ax
 
 
+def _grid_1d(X, Y):
+    X = np.asarray(X, float)
+    Y = np.asarray(Y, float)
+    if X.ndim == 2 and Y.ndim == 2:
+        return X[0, :], Y[:, 0]
+    return X, Y
+
+
+def streamplot_field(X, Y, U, V, *, density=1.15, color_by="speed",
+                     cbar_label="speed", xlabel="$x$", ylabel="$y$",
+                     figsize=(4.9, 3.9), ax=None):
+    """Vector field streamplot, optionally colored by local speed."""
+    U = np.asarray(U, float)
+    V = np.asarray(V, float)
+    speed = np.sqrt(U ** 2 + V ** 2)
+    x, y = _grid_1d(X, Y)
+    fig, ax = _fig(ax, figsize)
+    if color_by == "speed":
+        vmax = max(float(speed.max()), 1e-12)
+        lw = 0.45 + 1.25 * speed / vmax
+        sp = ax.streamplot(x, y, U, V, density=density, color=speed,
+                           cmap="viridis", linewidth=lw)
+        fig.colorbar(sp.lines, ax=ax, label=cbar_label)
+    else:
+        ax.streamplot(x, y, U, V, density=density, color=PALETTE[0],
+                      linewidth=0.9)
+    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel); ax.grid(False)
+    return fig, ax
+
+
+def surface3d(X, Y, Z, *, cmap="viridis", cbar_label="value", xlabel="$x$",
+              ylabel="$y$", zlabel="$z$", elev=28, azim=-55,
+              figsize=(5.2, 4.3), ax=None):
+    """3-D surface plot for scalar fields."""
+    X = np.asarray(X, float); Y = np.asarray(Y, float); Z = np.asarray(Z, float)
+    if ax is None:
+        fig = plt.figure(figsize=figsize)
+        ax = fig.add_subplot(111, projection="3d")
+    else:
+        fig = ax.figure
+    surf = ax.plot_surface(X, Y, Z, cmap=cmap, linewidth=0, antialiased=True,
+                           alpha=0.96)
+    fig.colorbar(surf, ax=ax, shrink=0.68, pad=0.08, label=cbar_label)
+    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel); ax.set_zlabel(zlabel)
+    ax.view_init(elev=elev, azim=azim)
+    return fig, ax
+
+
 # ============================ richer / multi-axes ============================
 
 def jointplot(x, y, *, xlabel="$x$", ylabel="$y$", figsize=(4.7, 4.7)):
@@ -286,4 +389,48 @@ def slopegraph(before, after, labels, *, left="Before", right="After",
     ax.set_xticks([0, 1]); ax.set_xticklabels([left, right])
     ax.set_xlim(-0.45, 1.45); ax.set_yticks([])
     ax.spines["left"].set_visible(False); ax.grid(False)
+    return fig, ax
+
+
+def sankey(flows, labels=None, *, orientations=None, unit="", fmt="%.2g",
+           title=None, gap=0.42, pathlengths=0.68, trunklength=1.15,
+           figsize=(5.2, 3.5), ax=None):
+    """Single-node Sankey diagram. Positive flows enter; negative flows leave."""
+    from matplotlib.sankey import Sankey
+
+    vals = np.asarray(flows, float)
+    if vals.size == 0 or not np.any(np.abs(vals) > 0):
+        raise ValueError("sankey requires at least one non-zero flow")
+    labs = list(labels) if labels is not None else [""] * vals.size
+    if len(labs) != vals.size:
+        raise ValueError("labels must match flows")
+    if not np.isclose(vals.sum(), 0.0, rtol=1e-9, atol=1e-12):
+        residual = -float(vals.sum())
+        vals = np.concatenate([vals, [residual]])
+        labs.append("loss" if residual < 0 else "balance")
+
+    if orientations is None:
+        orientations = [0] * vals.size
+    else:
+        orientations = list(orientations)
+        if len(orientations) == len(vals) - 1:
+            orientations.append(0)
+        if len(orientations) != len(vals):
+            raise ValueError("orientations must match balanced flows")
+
+    fig, ax = _fig(ax, figsize)
+    scale = 1.0 / max(float(np.max(np.abs(vals))), 1e-12)
+    if np.isscalar(pathlengths):
+        pathlengths = [float(pathlengths)] * vals.size
+    sk = Sankey(ax=ax, unit=unit, format=fmt, scale=scale, gap=gap,
+                radius=0.12, offset=0.18)
+    sk.add(flows=vals, labels=labs, orientations=orientations,
+           trunklength=trunklength, pathlengths=pathlengths,
+           facecolor=PALETTE[0], edgecolor="#555", alpha=0.75)
+    sk.finish()
+    for txt in ax.texts:
+        txt.set_fontsize(8)
+    if title:
+        ax.set_title(title)
+    ax.axis("off")
     return fig, ax
