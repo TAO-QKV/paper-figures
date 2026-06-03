@@ -24,6 +24,10 @@ The point is not "many chart thumbnails"; it is complex paper figures with hiera
 
 ![Complex method and system panel](examples/gallery_complex_systems.png)
 
+**Framework / method hero figure (original, compilable TikZ)** - the figure a paper opens with: a two-paradigm framework (mechanistic + data-driven, fused at the contribution), with a *real* method object embedded in each lane (a degradation curve crossing its failure threshold, an actual MLP, the fusion's prediction lines) instead of text-in-boxes. One `pdflatex` away, zero compile risk to the main document ([`examples/hero_tikz/framework_hero.tex`](examples/hero_tikz/framework_hero.tex); see [`framework-figures.md`](.claude/skills/paper-figure-generation/references/framework-figures.md)):
+
+![Two-paradigm framework hero figure in TikZ](examples/hero_tikz/framework_hero.png)
+
 Additional composite galleries are reproducible coverage examples, not the visual front door: [`showcase_gallery.py`](examples/showcase_gallery.py), [`coverage_gallery.py`](examples/coverage_gallery.py), [`domain_showcases.py`](examples/domain_showcases.py).
 
 Lower-level API smoke/demo galleries are kept as regression checks rather than the visual front door: [`gallery.py`](examples/gallery.py), [`archetypes_gallery.py`](examples/archetypes_gallery.py), [`paradigms_gallery.py`](examples/paradigms_gallery.py), [`modern_gallery.py`](examples/modern_gallery.py), [`scientific_gallery.py`](examples/scientific_gallery.py), [`advanced_gallery.py`](examples/advanced_gallery.py), [`rich_gallery.py`](examples/rich_gallery.py), [`before_after.py`](examples/before_after.py).
@@ -111,11 +115,14 @@ Think of it as: *SciencePlots-style presets, plus the judgment and building bloc
 | Path | What |
 |---|---|
 | `paperfig/` | the installable package: `style.py` (preset) + `archetypes.py` (callable A1–A10 + P5) |
-| `examples/` | runnable galleries (`complex_panels.py`, `showcase_gallery.py`, `coverage_gallery.py`, `domain_showcases.py`, `scientific_gallery.py`, `advanced_gallery.py`, `archetypes_gallery.py`, `paradigms_gallery.py`) + a complete TikZ hero (`hero_tikz/pipeline_hero.tex`) |
+| `examples/` | runnable galleries (`complex_panels.py`, `showcase_gallery.py`, `coverage_gallery.py`, `domain_showcases.py`, `scientific_gallery.py`, `advanced_gallery.py`, `archetypes_gallery.py`, `paradigms_gallery.py`) + two complete compilable TikZ framework heroes (`hero_tikz/pipeline_hero.tex` = §I-P1, `hero_tikz/framework_hero.tex` = §I-P2 paradigm swimlanes) |
 | `tests/` | pytest smoke tests (every archetype + three-format `save`) |
 | `.claude/skills/paper-figure-generation/SKILL.md` | the Claude skill (triggers, hard rules) |
 | `.../references/figure-cookbook.md` | **main reference**: §0b quality bar · §0a contract · §0 style · §A archetypes A1–A13 · §I composition paradigms P1–P6 · §J craft spec · §K original TikZ · §L external template library · §M Origin front-end |
+| `.../references/figure-critique.md` | the **quality gate**: operationalizes the §0b four axes + worked before→after critiques |
+| `.../references/framework-figures.md` | **framework/method-figure deep-dive**: two compilable hero examples + 3 borrowable TikZ techniques + curated resources |
 | `.../references/caption-and-quality.md` | caption writing + final quality checklist |
+| `scripts/critique.py` | runnable critique gate — static-analyses a figure script against the bar, exits non-zero on a hard-rule miss |
 | `scripts/_style.py` | back-compat shim → `paperfig.style` |
 | `data/processed/` · `outputs/figures/` | input data · output + `figure_manifest.csv` |
 | `CLAUDE.md` · `pyproject.toml` | project role + `<TEMPLATE_LIB>` convention · packaging |
@@ -123,6 +130,8 @@ Think of it as: *SciencePlots-style presets, plus the judgment and building bloc
 ## Hard rules
 
 Reproducible (a script reads data from a file; no inline data > 20 rows; no AI-generated images) · vector three-format (PDF + PNG + SVG) · style preset called once · colorblind- and grayscale-safe · units / N / uncertainty on the figure · pass the §0b four axes + §F reproducibility checklist before "done".
+
+These are **enforced, not just exhorted**: `python scripts/critique.py scripts/figN_<name>.py` static-analyses a figure script against the bar — hard-rule misses (no uncertainty, jet colormap, equal grid, default style, PNG-only) come back as `FAIL` (non-zero exit, so it gates CI), and the judgment-half (does the figure argue a mechanism? does one hero panel dominate? B&W-legible?) prints as prompts you answer by hand. See [`references/figure-critique.md`](.claude/skills/paper-figure-generation/references/figure-critique.md).
 
 ## Requirements
 

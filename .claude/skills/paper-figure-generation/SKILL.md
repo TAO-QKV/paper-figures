@@ -18,6 +18,11 @@ Open `references/figure-cookbook.md` and work in this order:
 
 ## For a hero / method figure (the one that carries the paper)
 
+**Start here: `references/framework-figures.md`** — the deep-dive for the framework /
+method / architecture figure, with two complete compilable heroes to paste from
+(`examples/hero_tikz/pipeline_hero.tex` = §I-P1, `framework_hero.tex` = §I-P2 paradigm
+swimlanes) + the three borrowable TikZ techniques + curated journal-grade resources.
+
 Do **not** reach for a generic boxes-and-arrows flowchart. Route:
 - **§I** composition paradigms P1–P6 (pipeline-with-hero, swimlanes, before-after diptych, distribution-flow, source-target alignment, decision-region) — pick one, embed the **real method object** (distribution / scatter / decision region), not a text label.
 - **§J** craft spec (color, type hierarchy, data-ink, white space, annotation-as-narrative, honest axes).
@@ -30,7 +35,12 @@ Do **not** reach for a generic boxes-and-arrows flowchart. Route:
 - **Style preset, once**: call `paper_style(...)` at the top; do not tweak rcParams per script.
 - **Colorblind + grayscale safe**: use the palette + redundant marker/linestyle so every series survives a B&W print and deuteranopia.
 - **Units + N + uncertainty on the figure**: axis labels carry units; N annotated; CI band / error bars shown (§0b axis 3).
-- **Acceptance test**: before declaring done, run the §0b four-axis self-check and the §F reproducibility checklist. A figure that merely "plots correctly" is not done.
+- **Acceptance test (run it, don't eyeball it)**: before declaring done, run the gate
+  `python scripts/critique.py scripts/figN_<name>.py` — it enforces the §F checklist + §G
+  anti-patterns mechanically (must report **no FAIL**) and prints the four judgment prompts.
+  Then answer the four §0b axes by hand using `references/figure-critique.md` (the mechanical
+  floor is defense; the four judgment ticks are the offense). A figure that merely "plots
+  correctly" — or merely passes the script — is not done.
 
 ## Optional front-ends / references
 
@@ -39,7 +49,7 @@ Do **not** reach for a generic boxes-and-arrows flowchart. Route:
 
 ## Captions
 
-After the figure, write the caption with `references/caption-and-quality.md` — the caption states the **conclusion**, not "Figure shows X"; reference figures in text as "as in Fig. 3", never "the figure below".
+After the figure passes the critique gate (`references/figure-critique.md`), write the caption with `references/caption-and-quality.md` — the caption states the **conclusion**, not "Figure shows X"; reference figures in text as "as in Fig. 3", never "the figure below".
 
 ## Output locations
 

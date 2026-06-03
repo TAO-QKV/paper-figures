@@ -30,6 +30,8 @@ Paste-ready, **publication-grade** figure templates for scientific papers (journ
 
 **One-line self-check**: hand the figure to the most demanding reviewer — can they find one "yes, but…"? (axis missing units / no uncertainty shown / mush in grayscale / a decorative panel / hero figure is a generic flowchart). If yes → not there yet; return to the four axes and close that gap.
 
+**Don't eyeball this bar — run it.** `python scripts/critique.py scripts/figN_<name>.py` enforces the machine-decidable half of these four axes (units / uncertainty / N on the figure, colormap, style preset, equal grid, vector three-format) and prints the judgment-half as prompts. The gate + the worked before→after critiques live in `references/figure-critique.md`. A `FAIL` is a hard-rule miss; clear it, then answer the four judgment prompts by hand — clearing the script is the *floor*, not the bar.
+
 **Difference from "plotted correctly is enough"**: correct = no risk of misreading (defense); publication-grade = a memorable highlight + nothing to attack (offense). We want the latter. **Axes 1+2 are the source of the highlight; axes 3+4 are the source of "unimpeachable".**
 
 ---
@@ -425,7 +427,8 @@ Reference in text: `as shown in Fig.~\ref{fig:pred}`, never just "the figure bel
 
 ## §F Reproducibility checklist
 
-Per figure script:
+Per figure script — most of this is now checked for you by
+`python scripts/critique.py scripts/figN_<name>.py` (see §0b / `references/figure-critique.md`):
 
 - [ ] reads data from a file path (no inline data > 20 rows)
 - [ ] calls `paper_style()` once
@@ -434,6 +437,7 @@ Per figure script:
 - [ ] writes a stdout line `[fig] saved ...`
 - [ ] is rerun-stable (random seed if randomness used)
 - [ ] registered in `outputs/figures/figure_manifest.csv`
+- [ ] `scripts/critique.py` reports **no FAIL**, and the four judgment prompts are answered
 
 ---
 
@@ -482,7 +486,7 @@ Need a figure?
 
 > **The most common failure** of a paper's hero/method figure is degenerating into a generic boxes-and-arrows flowchart — a reviewer reads it as filler, indistinguishable from every other paper. But "don't do X" doesn't teach you to do Y. Below are **6 imitable composition skeletons** distilled from real journal method figures (Nature Methods / IEEE / Cell / MDPI). Integrity rule: **borrow the composition, redraw it original — never screenshot**.
 
-Each paradigm gives: **when to use / skeleton / the real method object to embed / implementation route**.
+Each paradigm gives: **when to use / skeleton / the real method object to embed / implementation route**. For the full deep-dive — two **complete compilable worked heroes** (P1 `examples/hero_tikz/pipeline_hero.tex`, P2 `framework_hero.tex`), three borrowable TikZ techniques, and curated journal-grade resources to imitate — see **`references/framework-figures.md`**.
 
 ### P1 — Horizontal pipeline + endpoint circles + central hero band (pipeline-with-hero)
 - **When**: the method has a clear "input → several stages → output" backbone and one stage is the core contribution.
@@ -566,7 +570,7 @@ Each paradigm gives: **when to use / skeleton / the real method object to embed 
 
 ## §K Original vector mechanism figures (TikZ, embedding real method objects)
 
-> Why a hero figure goes TikZ instead of matplotlib: **vector journal quality + fonts matched to the body text + standalone compile = zero risk to the main document + original & reproducible (no AI-generated images)**. This section is the technique for embedding *real method objects* into TikZ — i.e. the implementation layer for §I P1–P6.
+> Why a hero figure goes TikZ instead of matplotlib: **vector journal quality + fonts matched to the body text + standalone compile = zero risk to the main document + original & reproducible (no AI-generated images)**. This section is the technique for embedding *real method objects* into TikZ — i.e. the implementation layer for §I P1–P6. **Two complete, `pdflatex`-verified worked heroes live in `examples/hero_tikz/` (`pipeline_hero.tex` = P1, `framework_hero.tex` = P2); `references/framework-figures.md` walks the three reusable techniques they use.** Paste one and swap the content rather than building from the K1–K5 fragments cold.
 
 ### K0 Engineering skeleton (standalone, compiled independently)
 ```latex

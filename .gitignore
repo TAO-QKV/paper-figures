@@ -16,13 +16,14 @@ outputs/figures/*.eps
 examples/*.pdf
 examples/*.svg
 
-# LaTeX build (TikZ hero figures)
+# LaTeX build (TikZ hero figures): ship the .tex (build with pdflatex), not the PDF
 *.aux
 *.log
 *.out
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+examples/hero_tikz/*.pdf
 
 # OS / editor
 .DS_Store
