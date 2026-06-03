@@ -78,6 +78,22 @@ layer sits *behind* node fills. Inter-block arrows on the background layer look
 clean (they cross empty gaps), but a mini-network *inside a filled box* must be
 drawn **in the main layer** (edges first, dots second) or the fill hides it.
 
+### T4 — Three more families (from `xinychen/awesome-latex-drawing`, published-paper-grade)
+When the framework's real object isn't a plain network, reach for one of these
+instead of forcing it into boxes:
+- **`bayesnet` library** — graphical-model / probabilistic frameworks: `\node[latent]`,
+  `\node[obs]`, `\factor`, `\plate{}{}{}` give latent vs observed variables, factors,
+  and **plates** (repetition over `N`). The right tool when the contribution is a
+  generative/Bayesian structure, not a pipeline.
+- **`tikz-3dplot` + `\newcommand{\Depth/\Width/\Height}`** — draw a **data tensor / 3-D
+  block** as a framework input or stage (partially-observed matrices, tensor
+  factorization). Parametrize the box dims once, reuse for every block.
+- **`\matrix` + `\usetikzlibrary{fit,calc}`** — lay framework components on an aligned
+  grid, then `fit` a labelled box around a group (cleaner than manual `positioning` for
+  a dense, multi-component framework — see their Example 25).
+
+All open directly on Overleaf — read the source, redraw original.
+
 ---
 
 ## Curated external resources (imitation targets — verified)
@@ -89,6 +105,9 @@ drawn **in the main layer** (edges first, dots second) or the fill hides it.
   hero; redraw the composition in TikZ. Do **not** export a slide into the paper.
 - **[dvgodoy/dl-visuals](https://github.com/dvgodoy/dl-visuals)** (free w/ credit,
   200+ diagrams) — more architecture/layer variants to imitate.
+- **[YupengQI99/awesome-ai-scientific-figures](https://github.com/YupengQI99/awesome-ai-scientific-figures)**
+  — community-verified AI-tool + prompt combinations for paper figures (a different angle:
+  *how to drive* an AI figure tool well). Use as a meta-reference, never paste its outputs.
 
 ### Reproducible TikZ technique (adapt the code, credit it)
 - **[tikz.net — neural networks (Izaak Neutelings)](https://tikz.net/neural_networks/)**
@@ -98,11 +117,26 @@ drawn **in the main layer** (edges first, dots second) or the fill hides it.
   ML + physics TikZ figures.
 - **[HarisIqbal88/PlotNeuralNet](https://github.com/HarisIqbal88/PlotNeuralNet)** (MIT)
   — Python→LaTeX for layered CNN-style block stacks (the 3-D box architecture look).
+- **[xinychen/awesome-latex-drawing](https://github.com/xinychen/awesome-latex-drawing)**
+  (MIT, 2k★) — 30+ framework / graphical-model figures **taken from published papers**
+  (IEEE TPAMI/TKDE/TRC), every one with Overleaf-openable source. The richest source of
+  *paper-grade* framework exemplars; it also adds the three technique families in T4 below.
+- **[PetarV-/TikZ](https://github.com/PetarV-/TikZ)** (MIT) — Petar Veličković's canonical
+  ML PGF/TikZ collection (GNNs, attention, sequence models); the most-referenced starting
+  point for ML method figures.
+- **[fraserlove/nntikz](https://github.com/fraserlove/nntikz)** (TeX) — clean, consistent
+  neural-network TikZ diagrams for academic reuse.
+- **[battlesnake/neural](https://github.com/battlesnake/neural)** (on CTAN as
+  `neuralnetwork`) — a ready-made LaTeX *package*: drop-in commands for layered net
+  diagrams when you'd rather not hand-roll the T2 `\foreach`.
 
 ### Principles (verified)
 - **[A Brief Guide to Designing Effective Figures (Rolandi et al.)](https://www.researchgate.net/publication/51682634_A_Brief_Guide_to_Designing_Effective_Figures_for_the_Scientific_Paper)**
 - **[Simplified Science Publishing — method-figure selection](https://www.simplifiedsciencepublishing.com/resources/how-to-make-good-figures-for-scientific-papers)**
   (method figure → flowchart / Sankey / parallel-sets / timeline selection).
+- **[jbmouret/matplotlib_for_papers](https://github.com/jbmouret/matplotlib_for_papers)**
+  (2.2k★) — the classic hands-on handout for publication-quality matplotlib; general data
+  figures rather than frameworks, but its typography / sizing discipline transfers directly.
 
 ---
 
