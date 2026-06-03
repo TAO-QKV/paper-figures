@@ -94,17 +94,23 @@ What the preset guarantees (so you never hand-tune rcParams per figure):
 
 ## §A Archetypes
 
-> **Two ways to use these.** The toolkit ships **33 callable functions** in the
-> installable `paperfig` package; each returns `(fig, ax)` so you tweak then
+> **Two ways to use these.** The toolkit ships **48 callable functions** in the
+> installable `paperfig` package; each returns `(fig, ax)` or `(fig, axes)` so you tweak then
 > `save(fig, name)`. Prefer the function; drop to a snippet for something bespoke.
 > - **core**: `timeseries_ci`, `sorted_bar`, `grouped_bar`, `scatter_fit`, `heatmap`, `pareto`, `tornado`
-> - **distributions**: `violin`, `raincloud`, `ridgeline`, `box`, `ecdf`, `qq`, `jointplot`, `hexbin_density`
-> - **ML / diagnostics**: `roc_curve`, `calibration`, `confusion`, `residual_diag`
-> - **stats / comparison**: `bar_err` (+significance brackets), `forest`, `bland_altman`, `slopegraph`, `radar`
+> - **distributions**: `violin`, `raincloud`, `ridgeline`, `histogram`, `box`, `ecdf`, `qq`, `jointplot`, `hexbin_density`
+> - **ML / diagnostics**: `roc_curve`, `pr_curve`, `calibration`, `confusion`, `residual_diag`, `feature_importance`, `convergence_curve`, `embedding_scatter`, `attention_map`
+> - **stats / comparison**: `bar_err` (+significance brackets), `bubble`, `forest`, `bland_altman`, `slopegraph`, `radar`
 > - **omics / genomics / medical**: `volcano`, `manhattan`, `survival` (Kaplan-Meier)
-> - **fields / dynamics**: `contour_field`, `streamplot_field`, `surface3d`, `phase_portrait`
-> - **transfer / method / flow**: `alignment_scatter` (P5 motif), `sankey`
+> - **fields / dynamics / spectra**: `contour_field`, `streamplot_field`, `surface3d`, `phase_portrait`, `trajectory`, `spectrum`, `ternary`
+> - **structure / set / flow**: `sankey`, `chord`, `dendrogram`, `network_graph`, `venn2`
+> - **imaging plates**: `image_panel` (microscopy / medical / remote-sensing panels with scalebars)
+> - **transfer / method**: `alignment_scatter` (P5 motif)
 > The A1–A13 code blocks below show the core ones in full; the rest live in `paperfig.scientific`.
+> Best-fit route: quantitative and ML panels use the callable matplotlib API;
+> mechanism / architecture / workflow figures use the TikZ composition paradigms;
+> image-heavy evidence uses `image_panel` plus quantitative subpanels. Pie/donut
+> charts remain de-emphasized; prefer sorted bars unless composition is the point.
 >
 > **Journal presets**: `paper_style(journal=...)` for `nature · science · cell · ieee · pnas · acs · rsc · elsevier · aps` sets that publisher's single-column width + font sizes (public author-guideline specs — verify against current guidelines, they drift).
 

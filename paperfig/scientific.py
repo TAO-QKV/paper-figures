@@ -434,3 +434,386 @@ def sankey(flows, labels=None, *, orientations=None, unit="", fmt="%.2g",
         ax.set_title(title)
     ax.axis("off")
     return fig, ax
+
+
+# ============================ expanded coverage ============================
+
+def histogram(groups, *, bins=30, density=False, xlabel="Value", ylabel=None,
+              alpha=0.45, figsize=(5, 3.4), ax=None):
+    """Histogram, overlaid for groups when a dict is supplied."""
+    groups = _as_groups(groups)
+    fig, ax = _fig(ax, figsize)
+    for i, (k, v) in enumerate(groups.items()):
+        ax.hist(np.asarray(v, float), bins=bins, density=density, alpha=alpha,
+                color=PALETTE[i % len(PALETTE)], edgecolor="white",
+                linewidth=0.35, label=k or None)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel or ("Density" if density else "Count"))
+    if any(groups):
+        ax.legend()
+    return fig, ax
+
+
+def bubble(x, y, size, *, color=None, labels=None, xlabel="$x$", ylabel="$y$",
+           size_label=None, cbar_label="value", figsize=(4.9, 3.7), ax=None):
+    """Bubble chart: scatter with area encoding for a third variable."""
+    x = np.asarray(x, float); y = np.asarray(y, float); s = np.asarray(size, float)
+    s_norm = (s - s.min()) / (np.ptp(s) + 1e-12)
+    areas = 28 + 520 * s_norm
+    fig, ax = _fig(ax, figsize)
+    if color is None:
+        sc = ax.scatter(x, y, s=areas, color=PALETTE[0], alpha=0.55,
+                        edgecolor="white", linewidth=0.5)
+    else:
+        sc = ax.scatter(x, y, s=areas, c=np.asarray(color, float), cmap="viridis",
+                        alpha=0.65, edgecolor="white", linewidth=0.5)
+        fig.colorbar(sc, ax=ax, label=cbar_label)
+    if labels is not None:
+        for xi, yi, lab in zip(x, y, labels):
+            ax.annotate(str(lab), (xi, yi), fontsize=7, xytext=(3, 3),
+                        textcoords="offset points")
+    if size_label:
+        ax.text(0.02, 0.98, size_label, transform=ax.transAxes, va="top", fontsize=8)
+    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel)
+    return fig, ax
+
+
+def pr_curve(y_true, y_score, *, label=None, figsize=(4.2, 3.9), ax=None):
+    """Precision-recall curve with average precision (binary labels + scores)."""
+    yt = np.asarray(y_true).astype(int)
+    order = np.argsort(-np.asarray(y_score, float))
+    yt = yt[order]
+    tp = np.cumsum(yt)
+    fp = np.cumsum(1 - yt)
+    recall = tp / max(int(yt.sum()), 1)
+    precision = tp / np.maximum(tp + fp, 1)
+    recall = np.concatenate([[0.0], recall])
+    precision = np.concatenate([[1.0], precision])
+    ap = float(np.sum(np.diff(recall) * precision[1:]))
+    fig, ax = _fig(ax, figsize)
+    lab = (f"{label} " if label else "") + f"AP = {ap:.3f}"
+    ax.step(recall, precision, where="post", color=PALETTE[0], lw=2, label=lab)
+    ax.set_xlabel("Recall"); ax.set_ylabel("Precision")
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1.02); ax.legend(loc="lower left")
+    return fig, ax
+
+
+def feature_importance(names, values, *, err=None, top=None,
+                       xlabel="Importance", figsize=None, ax=None):
+    """Sorted horizontal feature-importance plot, with optional uncertainty."""
+    names = np.asarray(names)
+    vals = np.asarray(values, float)
+    order = np.argsort(vals)
+    if top is not None:
+        order = order[-int(top):]
+    names, vals = names[order], vals[order]
+    err_vals = None if err is None else np.asarray(err, float)[order]
+    fig, ax = _fig(ax, figsize or (5, max(2.4, 0.3 * len(vals))))
+    ax.barh(np.arange(len(vals)), vals, xerr=err_vals, color=PALETTE[0],
+            alpha=0.72, edgecolor="white", linewidth=0.4,
+            error_kw=dict(ecolor="#444", lw=0.9, capsize=2))
+    ax.set_yticks(np.arange(len(vals))); ax.set_yticklabels(names)
+    ax.set_xlabel(xlabel)
+    return fig, ax
+
+
+def convergence_curve(history, *, x=None, xlabel="Epoch", ylabel="Metric",
+                      figsize=(5.4, 3.4), ax=None):
+    """Training convergence curves for loss, accuracy, or validation metrics."""
+    hist = history if isinstance(history, dict) else {"metric": history}
+    fig, ax = _fig(ax, figsize)
+    for i, (k, vals) in enumerate(hist.items()):
+        vals = np.asarray(vals, float)
+        xx = np.arange(1, len(vals) + 1) if x is None else np.asarray(x, float)
+        ax.plot(xx, vals, color=PALETTE[i % len(PALETTE)], lw=1.8, label=k)
+    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel); ax.legend()
+    return fig, ax
+
+
+def embedding_scatter(xy, labels=None, *, xlabel="Dim 1", ylabel="Dim 2",
+                      title_labels=True, figsize=(4.8, 3.9), ax=None):
+    """2-D embedding scatter for t-SNE / UMAP / PCA coordinates."""
+    xy = np.asarray(xy, float)
+    fig, ax = _fig(ax, figsize)
+    if labels is None:
+        ax.scatter(xy[:, 0], xy[:, 1], s=14, color=PALETTE[0], alpha=0.62,
+                   edgecolor="white", linewidth=0.25)
+    else:
+        labs = np.asarray(labels)
+        for i, lab in enumerate(dict.fromkeys(labs.tolist())):
+            m = labs == lab
+            c = PALETTE[i % len(PALETTE)]
+            ax.scatter(xy[m, 0], xy[m, 1], s=14, color=c, alpha=0.62,
+                       edgecolor="white", linewidth=0.25, label=str(lab))
+            if title_labels:
+                cen = xy[m].mean(axis=0)
+                ax.text(cen[0], cen[1], str(lab), fontsize=8, weight="bold",
+                        ha="center", va="center")
+        ax.legend(loc="best", fontsize=7)
+    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel)
+    return fig, ax
+
+
+def attention_map(attn, *, row_labels=None, col_labels=None, cmap="magma",
+                  cbar_label="attention", annot=False, figsize=(4.8, 4.0), ax=None):
+    """Attention heatmap for transformer or alignment weights."""
+    A = np.asarray(attn, float)
+    fig, ax = _fig(ax, figsize)
+    im = ax.imshow(A, cmap=cmap, vmin=0, vmax=max(float(np.nanmax(A)), 1e-12),
+                   aspect="auto")
+    fig.colorbar(im, ax=ax, label=cbar_label)
+    ax.set_xticks(np.arange(A.shape[1])); ax.set_yticks(np.arange(A.shape[0]))
+    if col_labels is not None:
+        ax.set_xticklabels(col_labels, rotation=45, ha="right")
+    if row_labels is not None:
+        ax.set_yticklabels(row_labels)
+    if annot and A.size <= 100:
+        for i in range(A.shape[0]):
+            for j in range(A.shape[1]):
+                ax.text(j, i, f"{A[i, j]:.2f}", ha="center", va="center",
+                        fontsize=7, color="white")
+    ax.grid(False)
+    return fig, ax
+
+
+def trajectory(x, y, *, t=None, xlabel="$x$", ylabel="$y$", cbar_label="time",
+               figsize=(4.9, 3.8), ax=None):
+    """2-D trajectory plot with start/end markers and optional time coloring."""
+    x = np.asarray(x, float); y = np.asarray(y, float)
+    fig, ax = _fig(ax, figsize)
+    ax.plot(x, y, color="#777", lw=0.9, alpha=0.65, zorder=1)
+    if t is None:
+        ax.scatter(x, y, s=10, color=PALETTE[0], alpha=0.55, zorder=2)
+    else:
+        sc = ax.scatter(x, y, c=np.asarray(t, float), s=12, cmap="viridis",
+                        alpha=0.8, zorder=2)
+        fig.colorbar(sc, ax=ax, label=cbar_label)
+    ax.scatter([x[0]], [y[0]], marker="o", s=42, color=PALETTE[2],
+               edgecolor="white", linewidth=0.6, label="start", zorder=3)
+    ax.scatter([x[-1]], [y[-1]], marker="s", s=42, color=PALETTE[1],
+               edgecolor="white", linewidth=0.6, label="end", zorder=3)
+    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel); ax.legend(loc="best")
+    return fig, ax
+
+
+def spectrum(x, intensity, *, peaks=None, top=0, xlabel="m/z",
+             ylabel="Intensity", fill=True, figsize=(5.4, 3.3), ax=None):
+    """Spectrum / chromatogram line plot with optional peak annotation."""
+    x = np.asarray(x, float); y = np.asarray(intensity, float)
+    fig, ax = _fig(ax, figsize)
+    ax.plot(x, y, color=PALETTE[0], lw=1.4)
+    if fill:
+        ax.fill_between(x, 0, y, color=PALETTE[0], alpha=0.16)
+    if peaks is None and top:
+        local = np.where((y[1:-1] >= y[:-2]) & (y[1:-1] >= y[2:]))[0] + 1
+        if local.size == 0:
+            local = np.arange(y.size)
+        keep = []
+        min_sep = max(1, y.size // 20)
+        for idx in local[np.argsort(-y[local])]:
+            if all(abs(idx - j) >= min_sep for j in keep):
+                keep.append(int(idx))
+            if len(keep) >= int(top):
+                break
+        peaks = np.asarray(sorted(keep), int)
+    if peaks is not None:
+        idx = np.asarray(peaks, int)
+        ax.scatter(x[idx], y[idx], s=18, color=PALETTE[1], zorder=3)
+        for i in idx:
+            ax.annotate(f"{x[i]:.3g}", (x[i], y[i]), fontsize=7,
+                        xytext=(0, 5), textcoords="offset points", ha="center")
+    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel)
+    return fig, ax
+
+
+def ternary(a, b, c, *, values=None, labels=("A", "B", "C"),
+            cbar_label="value", figsize=(4.8, 4.2), ax=None):
+    """Ternary composition scatter for three-part mixtures."""
+    a = np.asarray(a, float); b = np.asarray(b, float); c = np.asarray(c, float)
+    total = np.maximum(a + b + c, 1e-12)
+    a, b, c = a / total, b / total, c / total
+    x = b + 0.5 * c
+    y = np.sqrt(3) / 2 * c
+    fig, ax = _fig(ax, figsize)
+    tri = np.array([[0, 0], [1, 0], [0.5, np.sqrt(3) / 2], [0, 0]])
+    ax.plot(tri[:, 0], tri[:, 1], color="#333", lw=1)
+    for g in np.linspace(0.2, 0.8, 4):
+        ax.plot([g, 0.5 + 0.5 * g], [0, np.sqrt(3) / 2 * (1 - g)],
+                color="#ddd", lw=0.6)
+        ax.plot([1 - g, 0.5 * (1 - g)], [0, np.sqrt(3) / 2 * (1 - g)],
+                color="#ddd", lw=0.6)
+        ax.plot([0.5 * g, 1 - 0.5 * g], [np.sqrt(3) / 2 * g] * 2,
+                color="#ddd", lw=0.6)
+    if values is None:
+        ax.scatter(x, y, s=18, color=PALETTE[0], alpha=0.65,
+                   edgecolor="white", linewidth=0.35)
+    else:
+        sc = ax.scatter(x, y, c=np.asarray(values, float), cmap="viridis",
+                        s=20, alpha=0.75, edgecolor="white", linewidth=0.35)
+        fig.colorbar(sc, ax=ax, label=cbar_label, fraction=0.046, pad=0.04)
+    ax.text(-0.04, -0.04, labels[0], ha="right", va="top")
+    ax.text(1.04, -0.04, labels[1], ha="left", va="top")
+    ax.text(0.5, np.sqrt(3) / 2 + 0.05, labels[2], ha="center", va="bottom")
+    ax.set_aspect("equal"); ax.axis("off")
+    return fig, ax
+
+
+def venn2(counts, *, labels=("A", "B"), figsize=(4.3, 3.4), ax=None):
+    """Two-set Venn diagram. counts=(A only, B only, overlap)."""
+    from matplotlib.patches import Circle
+    a_only, b_only, both = counts
+    fig, ax = _fig(ax, figsize)
+    ca = Circle((-0.35, 0), 0.72, facecolor=PALETTE[0], alpha=0.34,
+                edgecolor=PALETTE[0], lw=1.2)
+    cb = Circle((0.35, 0), 0.72, facecolor=PALETTE[1], alpha=0.34,
+                edgecolor=PALETTE[1], lw=1.2)
+    ax.add_patch(ca); ax.add_patch(cb)
+    ax.text(-0.72, 0, str(a_only), ha="center", va="center", fontsize=11)
+    ax.text(0, 0, str(both), ha="center", va="center", fontsize=11, weight="bold")
+    ax.text(0.72, 0, str(b_only), ha="center", va="center", fontsize=11)
+    ax.text(-0.52, 0.78, labels[0], ha="center", fontsize=9)
+    ax.text(0.52, 0.78, labels[1], ha="center", fontsize=9)
+    ax.set_xlim(-1.25, 1.25); ax.set_ylim(-0.95, 1.05)
+    ax.set_aspect("equal"); ax.axis("off")
+    return fig, ax
+
+
+def network_graph(edges, *, nodes=None, pos=None, directed=False, labels=True,
+                  figsize=(4.8, 4.2), ax=None):
+    """Network topology plot with deterministic circular layout by default."""
+    fig, ax = _fig(ax, figsize)
+    if nodes is None:
+        nodes = sorted({u for e in edges for u in e[:2]} | {v for e in edges for v in e[:2]})
+    nodes = list(nodes)
+    if pos is None:
+        ang = np.linspace(0, 2 * np.pi, len(nodes), endpoint=False)
+        pos = {n: np.array([np.cos(a), np.sin(a)]) for n, a in zip(nodes, ang)}
+    degree = {n: 0 for n in nodes}
+    for e in edges:
+        degree[e[0]] += 1; degree[e[1]] += 1
+    for e in edges:
+        u, v = e[:2]
+        w = float(e[2]) if len(e) > 2 else 1.0
+        p, q = pos[u], pos[v]
+        if directed:
+            ax.annotate("", xy=q, xytext=p,
+                        arrowprops=dict(arrowstyle="-|>", lw=0.55 + 0.45 * w,
+                                        color="#666", shrinkA=13, shrinkB=13,
+                                        alpha=0.72))
+        else:
+            ax.plot([p[0], q[0]], [p[1], q[1]], color="#666",
+                    lw=0.55 + 0.45 * w, alpha=0.65, zorder=1)
+    for i, n in enumerate(nodes):
+        p = pos[n]
+        ax.scatter([p[0]], [p[1]], s=110 + 35 * degree[n],
+                   color=PALETTE[i % len(PALETTE)], edgecolor="white",
+                   linewidth=0.8, zorder=3)
+        if labels:
+            ax.text(p[0], p[1], str(n), ha="center", va="center",
+                    fontsize=8, color="white", weight="bold", zorder=4)
+    ax.set_aspect("equal"); ax.axis("off")
+    return fig, ax
+
+
+def dendrogram(data, *, labels=None, is_linkage=False, ylabel="Distance",
+               figsize=None, ax=None):
+    """Dendrogram from data matrix or a scipy-like linkage matrix."""
+    Z = np.asarray(data, float) if is_linkage else _average_linkage(np.asarray(data, float))
+    n = Z.shape[0] + 1
+    labs = [str(i) for i in range(n)] if labels is None else list(labels)
+    fig, ax = _fig(ax, figsize or (max(4.8, 0.36 * n), 3.4))
+    pos = {i: (float(i), 0.0) for i in range(n)}
+    for r, (a, b, h, _) in enumerate(Z):
+        a, b = int(a), int(b)
+        x1, y1 = pos[a]; x2, y2 = pos[b]
+        ax.plot([x1, x1, x2, x2], [y1, h, h, y2], color=PALETTE[0], lw=1.1)
+        pos[n + r] = ((x1 + x2) / 2, float(h))
+    ax.set_xticks(range(n)); ax.set_xticklabels(labs, rotation=45, ha="right")
+    ax.set_ylabel(ylabel); ax.grid(axis="x", visible=False)
+    return fig, ax
+
+
+def chord(matrix, *, labels=None, figsize=(4.8, 4.4), ax=None):
+    """Chord diagram for symmetric flow/association matrices."""
+    from matplotlib.path import Path
+    from matplotlib.patches import PathPatch
+    M = np.asarray(matrix, float)
+    n = M.shape[0]
+    labs = [str(i) for i in range(n)] if labels is None else list(labels)
+    fig, ax = _fig(ax, figsize)
+    ang = np.linspace(0, 2 * np.pi, n, endpoint=False) + np.pi / 2
+    pts = np.c_[np.cos(ang), np.sin(ang)]
+    vmax = max(float(np.nanmax(M)), 1e-12)
+    for i in range(n):
+        for j in range(i + 1, n):
+            w = M[i, j] + M[j, i]
+            if w <= 0:
+                continue
+            path = Path([pts[i], [0, 0], pts[j]], [Path.MOVETO, Path.CURVE3, Path.CURVE3])
+            ax.add_patch(PathPatch(path, facecolor="none", edgecolor=PALETTE[i % len(PALETTE)],
+                                   lw=0.5 + 4.5 * w / vmax, alpha=0.35))
+    node_w = M.sum(axis=0) + M.sum(axis=1)
+    sizes = 80 + 280 * node_w / max(float(node_w.max()), 1e-12)
+    ax.scatter(pts[:, 0], pts[:, 1], s=sizes,
+               color=[PALETTE[i % len(PALETTE)] for i in range(n)],
+               edgecolor="white", linewidth=0.8, zorder=3)
+    for p, lab in zip(pts, labs):
+        ax.text(p[0] * 1.16, p[1] * 1.16, lab, ha="center", va="center", fontsize=8)
+    ax.set_aspect("equal"); ax.axis("off")
+    return fig, ax
+
+
+def image_panel(images, *, titles=None, cmaps=None, scalebars=None,
+                cols=None, figsize=None):
+    """Image plate for microscopy/medical/remote-sensing panels with scalebars.
+
+    scalebars: optional list of (length_px, label) entries, one per image.
+    """
+    imgs = [np.asarray(im) for im in images]
+    n = len(imgs); cols = cols or min(3, n); rows = int(np.ceil(n / cols))
+    fig, axes = plt.subplots(rows, cols, figsize=figsize or (3.0 * cols, 2.6 * rows))
+    axes = np.atleast_1d(axes).ravel()
+    cmaps = [None] * n if cmaps is None else cmaps
+    scalebars = [None] * n if scalebars is None else scalebars
+    for i, (ax, im) in enumerate(zip(axes, imgs)):
+        ax.imshow(im, cmap=cmaps[i])
+        if titles is not None:
+            ax.set_title(titles[i], fontsize=9)
+        sb = scalebars[i]
+        if sb is not None:
+            length, label = sb
+            h, w = im.shape[:2]
+            x0 = w * 0.72; y0 = h * 0.88
+            ax.plot([x0, x0 + length], [y0, y0], color="white", lw=2.4,
+                    solid_capstyle="butt")
+            ax.text(x0 + length / 2, y0 - h * 0.04, label, color="white",
+                    ha="center", va="bottom", fontsize=8)
+        ax.set_axis_off()
+    for ax in axes[n:]:
+        ax.set_axis_off()
+    fig.tight_layout()
+    return fig, axes[:n]
+
+
+def _average_linkage(X):
+    """Small average-linkage clustering helper for dendrogram(), numpy-only."""
+    n = X.shape[0]
+    D = np.sqrt(((X[:, None, :] - X[None, :, :]) ** 2).sum(axis=2))
+    clusters = {i: [i] for i in range(n)}
+    active = list(range(n))
+    rows = []
+    next_id = n
+    while len(active) > 1:
+        best = None
+        for ai, a in enumerate(active[:-1]):
+            for b in active[ai + 1:]:
+                d = float(D[np.ix_(clusters[a], clusters[b])].mean())
+                if best is None or d < best[0]:
+                    best = (d, a, b)
+        d, a, b = best
+        merged = clusters[a] + clusters[b]
+        rows.append([a, b, d, len(merged)])
+        active = [x for x in active if x not in (a, b)] + [next_id]
+        clusters[next_id] = merged
+        next_id += 1
+    return np.asarray(rows, float)

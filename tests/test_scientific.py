@@ -12,15 +12,26 @@ def test_ml_charts():
     yt = (RNG.random(150) > 0.5).astype(int)
     ys = np.clip(yt * 0.4 + RNG.random(150) * 0.6, 0, 1)
     fig, ax = pf.roc_curve(yt, ys); assert fig and ax.has_data()
+    fig, ax = pf.pr_curve(yt, ys); assert fig and ax.has_data()
     fig, ax = pf.calibration(yt, ys); assert fig and ax.has_data()
+    fig, ax = pf.feature_importance(["a", "b", "c"], [0.2, 0.7, 0.4])
+    assert fig and ax.has_data()
+    fig, ax = pf.convergence_curve({"loss": np.linspace(1, 0.2, 20), "val": np.linspace(1.1, 0.35, 20)})
+    assert fig and ax.has_data()
+    xy = RNG.normal(0, 1, (90, 2)) + np.repeat([[0, 0], [3, 0], [0, 3]], 30, axis=0)
+    fig, ax = pf.embedding_scatter(xy, np.repeat(["A", "B", "C"], 30))
+    assert fig and ax.has_data()
+    fig, ax = pf.attention_map(RNG.random((6, 6))); assert fig and ax.has_data()
 
 
 def test_stats_charts():
     g = {"a": RNG.normal(0, 1, 80), "b": RNG.normal(1, 1, 80)}
-    for fn in (pf.ecdf, pf.box):
+    for fn in (pf.ecdf, pf.box, pf.histogram):
         fig, ax = fn(g); assert fig and ax.has_data()
     fig, ax = pf.bar_err(g, brackets=[(0, 1, "*")]); assert fig and ax.has_data()
     fig, ax = pf.qq(RNG.normal(0, 1, 100)); assert fig and ax.has_data()
+    fig, ax = pf.bubble(RNG.normal(0, 1, 20), RNG.normal(0, 1, 20), RNG.random(20))
+    assert fig and ax.has_data()
 
 
 def test_omics_medical():
@@ -47,6 +58,13 @@ def test_fields_and_density():
     U, V = -Y, X
     fig, ax = pf.streamplot_field(X, Y, U, V); assert fig and ax.has_data()
     fig, ax = pf.surface3d(X, Y, np.sin(X) * np.cos(Y)); assert fig and ax.name == "3d"
+    t = np.linspace(0, 1, 60)
+    fig, ax = pf.trajectory(np.cos(8 * t), np.sin(8 * t), t=t); assert fig and ax.has_data()
+    x = np.linspace(100, 500, 120)
+    fig, ax = pf.spectrum(x, np.exp(-((x - 250) / 25) ** 2), top=1)
+    assert fig and ax.has_data()
+    fig, ax = pf.ternary(RNG.random(30), RNG.random(30), RNG.random(30))
+    assert fig is not None
 
 
 def test_rich_multiaxes():
@@ -56,6 +74,16 @@ def test_rich_multiaxes():
     fig, ax = pf.slopegraph([1, 2], [2, 1], ["p", "q"]); assert fig and ax.has_data()
     fig, ax = pf.sankey([10, -5, -3, -2], ["input", "A", "B", "C"])
     assert fig is not None and len(ax.texts) > 0
+    fig, ax = pf.venn2((4, 5, 2)); assert fig is not None and len(ax.texts) >= 3
+    fig, ax = pf.network_graph([("a", "b"), ("b", "c"), ("c", "a")])
+    assert fig is not None and len(ax.collections) > 0
+    fig, ax = pf.dendrogram(RNG.normal(0, 1, (6, 3)))
+    assert fig is not None and ax.has_data()
+    fig, ax = pf.chord(np.array([[0, 2, 1], [2, 0, 3], [1, 3, 0]]))
+    assert fig is not None and len(ax.patches) > 0
+    fig, axes = pf.image_panel([RNG.random((20, 20)), RNG.random((20, 20))],
+                               scalebars=[(5, "5 um"), None])
+    assert fig is not None and len(axes) == 2
 
 
 def test_roc_auc_perfect():

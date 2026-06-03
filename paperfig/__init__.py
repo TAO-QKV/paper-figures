@@ -22,13 +22,16 @@ from .scientific import (
     roc_curve, calibration, ecdf, box, bar_err, qq, volcano, survival,
     manhattan, forest, bland_altman, contour_field, hexbin_density,
     streamplot_field, surface3d, jointplot, radar, slopegraph, sankey,
+    histogram, bubble, pr_curve, feature_importance, convergence_curve,
+    embedding_scatter, attention_map, trajectory, spectrum, ternary, venn2,
+    network_graph, dendrogram, chord, image_panel,
 )
 
 # Register the bundled style on import so `plt.style.use("paperfig")` works
 # for pure-matplotlib users who don't want the paper_style() API.
 register_style()
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 __all__ = [
     "paper_style", "save", "register_style", "STYLE_PATH",
     "PALETTE", "MARKERS", "LINESTYLES",
@@ -38,5 +41,8 @@ __all__ = [
     "roc_curve", "calibration", "ecdf", "box", "bar_err", "qq", "volcano",
     "survival", "manhattan", "forest", "bland_altman", "contour_field",
     "hexbin_density", "streamplot_field", "surface3d", "jointplot", "radar",
-    "slopegraph", "sankey",
+    "slopegraph", "sankey", "histogram", "bubble", "pr_curve",
+    "feature_importance", "convergence_curve", "embedding_scatter",
+    "attention_map", "trajectory", "spectrum", "ternary", "venn2",
+    "network_graph", "dendrogram", "chord", "image_panel",
 ]
