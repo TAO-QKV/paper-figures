@@ -41,7 +41,7 @@ Save as `outputs/figures/<name>_contract.md` next to each figure script. Pattern
 ```yaml
 figure_id: fig2_main_allocation
 core_claim: "<ONE sentence the figure must defend>"
-backend: matplotlib  # matplotlib | R — pick one; do not cross-render
+backend: matplotlib  # matplotlib | tikz — pick one; do not cross-render
 panels:
   - id: a
     type: sorted_bar
@@ -64,70 +64,28 @@ stats_on_figure: "95% CI as error bars; N annotated per bar"
 
 ---
 
-## §0 Shared style preset (put this in `scripts/_style.py`)
+## §0 Shared style preset (`scripts/_style.py` — the single source of truth)
 
-```python
-# scripts/_style.py
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from pathlib import Path
+The preset lives in **`scripts/_style.py`**; don't re-paste or fork it (it drifts). Its interface:
 
-# Paper-safe 6-color palette (colorblind-friendly, B&W-discriminable via marker)
-PALETTE = ['#1f77b4', '#d62728', '#2ca02c', '#ff7f0e', '#9467bd', '#8c564b']
-MARKERS = ['o', 's', '^', 'D', 'v', 'P']
-LINESTYLES = ['-', '--', '-.', ':', (0, (3, 1, 1, 1)), (0, (5, 1))]
-
-def paper_style(chinese=True):
-    """Apply paper-grade rcParams. Call once before plotting."""
-    mpl.rcParams.update({
-        # Editable-vector rule: text stays as text in SVG/PDF so editors can
-        # fix labels without re-rendering. (Pattern from Nature-figure.)
-        'svg.fonttype': 'none',
-        'pdf.fonttype': 42,
-        'ps.fonttype': 42,
-        'figure.dpi': 120,
-        'savefig.dpi': 300,
-        'savefig.bbox': 'tight',
-        'savefig.pad_inches': 0.02,
-        'font.size': 10.5,
-        'axes.titlesize': 11,
-        'axes.labelsize': 10.5,
-        'xtick.labelsize': 9,
-        'ytick.labelsize': 9,
-        'legend.fontsize': 9,
-        'axes.linewidth': 0.8,
-        'lines.linewidth': 1.4,
-        'lines.markersize': 4.5,
-        'xtick.direction': 'in',
-        'ytick.direction': 'in',
-        'xtick.major.size': 3,
-        'ytick.major.size': 3,
-        'axes.spines.top': False,
-        'axes.spines.right': False,
-        'axes.grid': False,
-        'legend.frameon': False,
-        'mathtext.fontset': 'cm',
-    })
-    if chinese:
-        # Use SimSun / SimHei if available, else default
-        mpl.rcParams['font.family'] = ['serif']
-        mpl.rcParams['font.serif'] = ['SimSun', 'Times New Roman', 'DejaVu Serif']
-        mpl.rcParams['axes.unicode_minus'] = False
-    return PALETTE, MARKERS, LINESTYLES
-
-def save(fig, name, outdir='outputs/figures'):
-    """Save both PDF (vector) and PNG (raster) to outdir/name.*"""
-    Path(outdir).mkdir(parents=True, exist_ok=True)
-    fig.savefig(f'{outdir}/{name}.pdf')
-    fig.savefig(f'{outdir}/{name}.png')
-    print(f'[fig] saved {outdir}/{name}.pdf + .png')
-```
-
-Every template below begins with:
 ```python
 from _style import paper_style, save, PALETTE, MARKERS, LINESTYLES
-PALETTE, MARKERS, LS = paper_style(chinese=True)
+
+# Call ONCE at the top of every figure script. font: 'sans'(default, most
+# journals' submission spec) | 'serif'(Times) | 'cn'(SimSun, Chinese papers).
+PALETTE, MARKERS, LS = paper_style(font='sans')
+# ... plot ...
+save(fig, 'fig1_main_result')   # writes PDF + PNG + SVG to outputs/figures/
 ```
+
+What the preset guarantees (so you never hand-tune rcParams per figure):
+- **Editable vector**: `svg.fonttype='none'`, `pdf.fonttype=42` → text stays text in SVG/PDF, fixable in Illustrator/Inkscape without re-rendering.
+- **300 dpi**, tight bbox, white canvas (no grey-on-Word transparent PNG).
+- **Colorblind-safe palette** (`PALETTE`, Wong-derived) + `MARKERS` + `LINESTYLES` for redundant B&W-legible encoding.
+- Soft near-black ink (not pure `#000`), top/right spines off, ticks inward, minor ticks on, subtle grid behind data, semi-opaque legend box, `axes.unicode_minus=False`.
+- Three-format export via `save()` (PDF + PNG + SVG); override with `save(fig, name, formats=('pdf',))`.
+
+> If you start a fresh project without this repo, copy `scripts/_style.py` verbatim — it *is* the preset. The archetypes below assume it is importable.
 
 ---
 
@@ -449,7 +407,7 @@ Per figure script:
 - [ ] reads data from a file path (no inline data > 20 rows)
 - [ ] calls `paper_style()` once
 - [ ] uses palette colors, not raw color names
-- [ ] saves both PDF + PNG via `save()`
+- [ ] saves PDF + PNG + SVG via `save()`
 - [ ] writes a stdout line `[fig] saved ...`
 - [ ] is rerun-stable (random seed if randomness used)
 - [ ] registered in `outputs/figures/figure_manifest.csv`
@@ -463,13 +421,14 @@ Per figure script:
 | 3D bar / pie chart | low data-ink ratio, hard to read | A2 sorted bar |
 | Dual y-axis with no physical link | misleading | split into two panels |
 | Rainbow colormap | not perceptually uniform | viridis / RdBu_r |
-| Default matplotlib font + no Chinese | renders as ☐☐☐ | call `paper_style()` |
+| Default matplotlib style (off-brand font, blue/orange, top-right spines) | reads as a homework plot, not a paper | call `paper_style()` |
+| Missing-glyph boxes (☐☐☐) for CJK / special chars | broken render | `paper_style(font='cn')` + install the font; keep math in mathtext |
 | Inline tiny legends overlapping data | unreadable | move legend out, or use direct labels |
-| Saving only PNG at 72 dpi | grainy in print | `save()` produces 300 dpi PDF + PNG |
+| Saving only PNG at 72 dpi | grainy in print | `save()` produces 300 dpi PDF + PNG + SVG |
 | Figure with no body-text interpretation | counted as decoration | add 2–3 sentences before/after |
 | Same color/marker for different things | confusion | one (color, marker, ls) tuple per series |
-| AI-generated image for "model architecture" | unreproducible, banned | Mermaid (A11) or TikZ (A12) |
-| Hero/architecture figure that reads as a generic boxes-and-arrows flowchart | judges score it as filler, indistinguishable from every other paper — the most common schematic failure | make the hero figure domain-specific: embed actual method objects (distributions, transforms, decision regions), borrow journal composition, redraw original (not screenshot). A11/A12 are fallbacks for *minor* flowcharts only |
+| AI-generated image for "method architecture" | unreproducible, banned | original TikZ (§K) or Mermaid (A11) |
+| Hero/architecture figure that reads as a generic boxes-and-arrows flowchart | reviewers score it as filler, indistinguishable from every other paper — the most common schematic failure | make the hero figure domain-specific: embed actual method objects (distributions, transforms, decision regions), borrow journal composition, redraw original (not screenshot). A11/A12 are fallbacks for *minor* flowcharts only |
 
 ---
 

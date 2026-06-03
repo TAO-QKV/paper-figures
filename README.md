@@ -1,5 +1,10 @@
 # paper-figures — a publication-grade figure system for scientific papers
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)
+![matplotlib](https://img.shields.io/badge/matplotlib-%E2%89%A53.6-11557c.svg)
+![figures](https://img.shields.io/badge/output-PDF%20%2B%20PNG%20%2B%20SVG-success.svg)
+
 Turn "a dataset + a claim" into a **publication-grade figure** — the kind a top-journal editor accepts with no revision request. A self-contained Claude skill: reproducible matplotlib/seaborn plots for data figures, and original TikZ for hero/method figures.
 
 ## Quickstart (with Claude)
