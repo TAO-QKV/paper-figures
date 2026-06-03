@@ -20,6 +20,16 @@ The point is not "many chart thumbnails"; it is complex paper figures with hiera
 
 ![Coverage gallery](examples/gallery_coverage.png)
 
+**Domain-specific composite showcases** — richer first-page coverage for the chart families reviewers actually expect: distribution/statistical inference, ML/deep-learning diagnostics, spatial/physical/imaging evidence, and structure/process/mechanism diagrams ([`examples/domain_showcases.py`](examples/domain_showcases.py)):
+
+![Statistics domain showcase](examples/gallery_domain_statistics.png)
+
+![Machine-learning domain showcase](examples/gallery_domain_ml.png)
+
+![Spatial and imaging domain showcase](examples/gallery_domain_spatial.png)
+
+![Structure and mechanism domain showcase](examples/gallery_domain_structure.png)
+
 Additional smoke/demo galleries are kept as reproducible API checks rather than the visual front door: [`gallery.py`](examples/gallery.py), [`archetypes_gallery.py`](examples/archetypes_gallery.py), [`paradigms_gallery.py`](examples/paradigms_gallery.py), [`modern_gallery.py`](examples/modern_gallery.py), [`scientific_gallery.py`](examples/scientific_gallery.py), [`advanced_gallery.py`](examples/advanced_gallery.py), [`rich_gallery.py`](examples/rich_gallery.py), [`before_after.py`](examples/before_after.py).
 
 ## Quickstart (with Claude)
@@ -105,7 +115,7 @@ Think of it as: *SciencePlots-style presets, plus the judgment and building bloc
 | Path | What |
 |---|---|
 | `paperfig/` | the installable package: `style.py` (preset) + `archetypes.py` (callable A1–A10 + P5) |
-| `examples/` | runnable galleries (`showcase_gallery.py`, `coverage_gallery.py`, `scientific_gallery.py`, `advanced_gallery.py`, `archetypes_gallery.py`, `paradigms_gallery.py`) + a complete TikZ hero (`hero_tikz/pipeline_hero.tex`) |
+| `examples/` | runnable galleries (`showcase_gallery.py`, `coverage_gallery.py`, `domain_showcases.py`, `scientific_gallery.py`, `advanced_gallery.py`, `archetypes_gallery.py`, `paradigms_gallery.py`) + a complete TikZ hero (`hero_tikz/pipeline_hero.tex`) |
 | `tests/` | pytest smoke tests (every archetype + three-format `save`) |
 | `.claude/skills/paper-figure-generation/SKILL.md` | the Claude skill (triggers, hard rules) |
 | `.../references/figure-cookbook.md` | **main reference**: §0b quality bar · §0a contract · §0 style · §A archetypes A1–A13 · §I composition paradigms P1–P6 · §J craft spec · §K original TikZ · §L external template library · §M Origin front-end |

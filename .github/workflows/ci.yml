@@ -34,4 +34,5 @@ jobs:
           python examples/showcase_gallery.py
           python examples/advanced_gallery.py
           python examples/coverage_gallery.py
+          python examples/domain_showcases.py
           python examples/rich_gallery.py
