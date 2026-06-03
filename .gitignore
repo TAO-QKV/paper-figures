@@ -12,6 +12,10 @@ outputs/figures/*.png
 outputs/figures/*.svg
 outputs/figures/*.eps
 
+# Example outputs: keep the PNG (shown in README), drop the regenerable vectors
+examples/*.pdf
+examples/*.svg
+
 # LaTeX build (TikZ hero figures)
 *.aux
 *.log
