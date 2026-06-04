@@ -162,6 +162,66 @@ mechanical floor *before* the revision — the lift is pure judgment.
   (`-/--/-.`), and direct-label each line at its end instead of a colour legend.
   Survives the B&W printer; the argument holds in any reproduction.
 
+### Case 5 — "the bar of means" → "the distribution" (axis 1)
+
+- **Before**: a bar chart of group means with an SE whisker ("dynamite plot"),
+  comparing treated vs control. Mechanically clean — uncertainty is even drawn.
+- **Diagnosis (axis 1)**: the bar height is the *summary*, not the *finding*. Two
+  groups can share a mean while one is bimodal and the other tight — the bar hides
+  exactly the structure that matters, and the SE whisker makes a tiny difference
+  look decisive by shrinking with N.
+- **After**: a raincloud (or violin + jittered points), so the reader sees the
+  actual spread, the overlap, any bimodality — and the effect is judged against the
+  *distribution*, not a bar. The mean becomes one annotation on top, not the figure.
+
+### Case 6 — "a 12 % jump" → "a 2 % wobble" (axis 3)
+
+- **Before**: a bar chart where the bars start at `y = 0.86`; the winning method's
+  bar towers over the others. Crisp, labelled, looks convincing.
+- **Diagnosis (axis 3, honest axes)**: the truncated baseline manufactures the
+  story. Start the axis at 0 and the "decisive" lead is a 2 % nudge inside
+  overlapping error bars. A skeptic spots the truncation in a glance and stops
+  trusting the rest of the paper.
+- **After**: bars from 0 with the error bars shown; if the small-but-real
+  difference *is* the point, say so honestly — keep the 0 baseline and annotate
+  "+2.1 % (95% CI [0.3, 3.9])" rather than letting a cropped axis do the arguing.
+
+### Case 7 — "every point shouted" → "one thing said" (axis 2)
+
+- **Before**: a scatter where all 40 points are labelled, five arrows point at
+  "outliers", three text boxes explain regions, and a gradient background fills the
+  panel. Busy, but "informative".
+- **Diagnosis (axis 2, data-ink)**: annotation serves *one* claim, not a pile.
+  Forty labels and five arrows compete; the eye finds no signal because everything
+  is emphasised, so nothing is. The decorative gradient encodes nothing.
+- **After**: drop the background, delete 38 labels, keep the one arrow on the one
+  point the claim is about ("the lone high-leverage case, removed in the robust
+  fit"). Restraint *is* the emphasis — one mark draws the eye because it is alone.
+
+### Case 8 — "legend ping-pong" → "read it where it is" (axis 4)
+
+- **Before**: six time-series lines, a legend in the corner keying line 1…6 to
+  names. The reader's eye bounces between legend and curve to decode each line.
+- **Diagnosis (axis 4, craft)**: with more than ~3 series a keyed legend taxes the
+  reader on every glance; the figure reads as a homework plot because the labelling
+  is lazy. (And six similar lines is itself a smell — can you aggregate or split?)
+- **After**: label each line at its right end, in the line's colour, no legend.
+  The name sits where the data is, so the figure is read in one pass. If six is
+  genuinely too many, facet or highlight the two that carry the claim and grey the
+  rest to context.
+
+### Case 9 — "error bars" → "± what, over how many" (axis 3)
+
+- **Before**: a comparison with error bars and the caption "error bars show
+  variability". Mechanically `U3` passes — uncertainty *is* drawn.
+- **Diagnosis (axis 3, unimpeachable)**: drawn-but-undefined uncertainty is not
+  unimpeachable. SD, SE, and a 95% CI tell different stories and differ by √N; a
+  reviewer cannot judge the claim without knowing which, and N. The bar that looks
+  tight might be SE over n=3.
+- **After**: state it on the figure — "mean ± 95% CI, n = 28 per group" — and pick
+  the interval that matches the claim (CI for "where the mean is", a prediction
+  interval for "where a new sample lands"). Same ink, now falsifiable.
+
 ---
 
 ## Checklist to paste under each figure before "done"
