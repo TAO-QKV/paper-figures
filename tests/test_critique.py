@@ -162,3 +162,25 @@ def test_tikz_non_standalone_warns(tmp_path):
     p.write_text("\\begin{tikzpicture}\n\\draw plot coordinates {(0,0)(1,1)};\n\\end{tikzpicture}\n", encoding="utf-8")
     report = critique_script(p)
     assert "WARN" in levels(report, "TX0")  # not standalone -> compile-risk warning
+
+
+# --- dogfood: the repo's own showcase figures must clear their own gate ----- #
+@pytest.mark.parametrize("rel", [
+    "examples/gallery.py",
+    "examples/hero_tikz/pipeline_hero.tex",
+    "examples/hero_tikz/framework_hero.tex",
+    "examples/hero_tikz/graphical_model_hero.tex",
+    "examples/hero_tikz/tensor_framework_hero.tex",
+    "examples/hero_tikz/matrix_layout_hero.tex",
+])
+def test_shipped_exemplars_clear_their_own_gate(rel):
+    """We hold our own examples to the bar we preach: every shipped showcase
+    figure must report no FAIL. This also guards against a future edit silently
+    breaking a hero's axis-1 embedding (turning it back into a text-box flowchart).
+    """
+    path = ROOT / rel
+    if not path.exists():
+        pytest.skip(f"{rel} not present")
+    report = critique_script(path, outdir=ROOT / "examples")
+    fails = [f"[{f.check}] {f.msg}" for f in report.findings if f.level == "FAIL"]
+    assert not fails, f"{rel} fails its own critique gate: {fails}"
