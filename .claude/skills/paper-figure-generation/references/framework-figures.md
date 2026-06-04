@@ -165,9 +165,11 @@ structure, a partially-observed tensor, a result-bearing grid — not empty boxe
    paradigm names, the embedded objects = your real method objects, the output
    circle = your real headline number.
 3. **Apply T1–T3** for any new repeated structure or grouping.
-4. **Run the critique gate** conceptually (`references/figure-critique.md`): does a
-   real method object live in the hero (axis 1)? is the hero visually heaviest
-   (axis 2)? does it read journal not homework in 0.5 s (axis 4)? If the hero is
-   still text-in-boxes, it is not a framework figure yet — go back to step 2.
+4. **Run the critique gate** — `python scripts/critique.py <your-hero>.tex` makes the
+   axis-1 call mechanically: it `FAIL`s a `.tex` that is bare nodes + arrows with no
+   embedded method object (the generic-flowchart red line), and `WARN`s a math-only
+   node map (structure-map). Clear it, then answer by eye: is the hero visually
+   heaviest (axis 2)? does it read journal not homework in 0.5 s (axis 4)? If the
+   hero is still text-in-boxes, it is not a framework figure yet — go back to step 2.
 5. **Compile standalone** (`pdflatex`), `\includegraphics` the PDF, register it in
    `outputs/figures/figure_manifest.csv` with `generation = tikz:<file>.tex`.

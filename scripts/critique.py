@@ -36,11 +36,29 @@ LEVELS = {"PASS": 0, "INFO": 1, "WARN": 2, "FAIL": 3}
 MARK = {"PASS": "ok ", "INFO": "i  ", "WARN": "!  ", "FAIL": "XXX"}
 
 AXES = {
+    "depth": "Axis 1 — Depth (TikZ hero: embeds a real method object, not text-in-boxes)",
     "reproducible": "Reproducibility (§F)",
     "unimpeachable": "Axis 3 — Unimpeachable (uncertainty / N / units / B&W)",
     "elegance": "Axis 2 — Elegance (one hero, maximal data-ink)",
     "visible-gap": "Axis 4 — Visible gap (journal-grade craft)",
     "artifact": "Rendered artifacts (vector three-format)",
+}
+
+# Signals that a TikZ hero embeds a *real method object* (§K) rather than being a
+# generic boxes-and-arrows flowchart. Any one is enough.
+TIKZ_REAL_OBJECT = {
+    "plotted curve / density (plot coordinates / addplot / axis)":
+        r"plot\s+coordinates|\\addplot|\\begin\{axis\}",
+    "scatter / point cloud / drawn network (\\foreach + circle/fill)":
+        r"\\foreach[\s\S]{0,160}?(?:circle\s*\(|\\fill\b)",
+    "random point cloud (rand / rnd)":
+        r"\brnd\b|\brand\b",
+    "shaded decision regions (\\fill[...] ... rectangle)":
+        r"\\fill\[[^\]]*\][\s\S]{0,90}?\brectangle\b",
+    "graphical-model structure (latent / obs / plate / factor)":
+        r"\\node\[[^\]]*\b(?:latent|obs|const)\b[^\]]*\]|\\plate\b|\\factor\b",
+    "smooth distribution curve":
+        r"\bsmooth\b",
 }
 
 BAD_CMAPS = ("jet", "rainbow", "hsv", "gist_rainbow", "nipy_spectral", "gist_ncar")
@@ -326,19 +344,63 @@ def render(report: Report, show_pass: bool) -> str:
     return "\n".join(out)
 
 
+def analyse_tikz(src: str, report: Report) -> None:
+    """Static critique of a standalone TikZ hero/method figure (.tex).
+
+    The one check a machine can make here that it cannot for a data figure: does
+    the hero embed a REAL method object (a drawn distribution / scatter / decision
+    region / graphical-model structure), or is it the generic boxes-and-arrows
+    flowchart §G/§K warn against? Bare nodes + arrows with no embedded object is
+    the single most common hero-figure failure.
+    """
+    # reproducible by construction — but a standalone doc is zero compile risk
+    if re.search(r"\\documentclass(?:\[[^\]]*\])?\{standalone\}|\\documentclass\[[^\]]*\bstandalone\b", src):
+        report.add("reproducible", "TX0", "PASS", "standalone document — zero compile risk to the paper")
+    else:
+        report.add("reproducible", "TX0", "WARN", "not a standalone document",
+                   "compile as \\documentclass[tikz]{standalone} → PDF → \\includegraphics (§K0): "
+                   "zero compile risk to the main document")
+
+    n_nodes = len(re.findall(r"\\node\b", src))
+    n_arrows = len(re.findall(r"-\{?Latex|->|\\draw\[[^\]]*\barr\b", src))
+    n_math = len(re.findall(r"\$[^$]+\$", src))
+
+    found = [name for name, pat in TIKZ_REAL_OBJECT.items() if re.search(pat, src, re.S)]
+    if found:
+        report.add("depth", "TX1", "PASS", "embeds a real method object — " + "; ".join(found[:2]))
+    elif n_math >= 3:
+        report.add("depth", "TX1", "WARN",
+                   f"no *drawn* method object; {n_math} math expressions in nodes (a §K5/T4c structure-map?)",
+                   "OK as a structure/result map IF cells carry real formulas/numbers (not empty labels); "
+                   "but a true hero should embed a drawn distribution / scatter / region (§K, framework-figures.md)")
+    else:
+        report.add("depth", "TX1", "FAIL",
+                   f"no embedded method object — {n_nodes} nodes + {n_arrows} arrows read as a generic flowchart",
+                   "axis 1: at least one hero node must embed a REAL object (distribution / scatter / decision "
+                   "region / before-after), not text-in-boxes (§G, §K, framework-figures.md)")
+
+    # hero must be visually heaviest (§J) — soft check
+    if n_nodes >= 3 and not re.search(r"line width|ultra thick|very thick|draw=red|fill=red", src):
+        report.add("visible-gap", "TX2", "WARN", "no visually-heaviest hero node detected",
+                   "set the contribution node off — heavier border (line width) / saturated colour (§J: hero is heaviest)")
+
+
 def critique_script(path: str | Path, outdir: str | Path = "outputs/figures") -> Report:
-    """Critique one figure script. Importable for tests."""
+    """Critique one figure script (.py data figure or .tex TikZ hero). Importable for tests."""
     path = Path(path)
     report = Report(path=path)
     src = path.read_text(encoding="utf-8", errors="ignore")
-    analyse_source(src, report)
-    analyse_artifacts(report, Path(outdir))
+    if path.suffix == ".tex":
+        analyse_tikz(src, report)
+    else:
+        analyse_source(src, report)
+        analyse_artifacts(report, Path(outdir))
     return report
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="Critique a figure script against the §0b four-axis bar.")
-    ap.add_argument("script", help="path to a figure script (e.g. scripts/fig2_main.py)")
+    ap = argparse.ArgumentParser(description="Critique a figure against the §0b four-axis bar (matplotlib .py or TikZ .tex).")
+    ap.add_argument("script", help="path to a figure script — a matplotlib .py, or a TikZ hero .tex")
     ap.add_argument("--outdir", default="outputs/figures", help="where rendered figures live")
     ap.add_argument("--strict", action="store_true", help="treat WARN as failure (exit 1)")
     ap.add_argument("--show-pass", action="store_true", help="also print passing checks")

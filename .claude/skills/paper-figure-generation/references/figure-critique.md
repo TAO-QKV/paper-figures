@@ -27,11 +27,19 @@ survives a **judgment pass**. Two layers, run in order:
 ```
 python scripts/critique.py scripts/fig2_main_result.py          # report + judgment prompts
 python scripts/critique.py scripts/fig2_main_result.py --strict  # WARN also fails (pre-submit)
+python scripts/critique.py examples/hero_tikz/framework_hero.tex # a TikZ hero — axis-1 gate
 ```
 
 Exit code 0 = mechanical floor cleared (no FAIL); 1 = a hard rule is violated.
 Wire it into CI or a pre-submit hook so no figure ships below the floor. Then —
 every time — answer the four judgment prompts before writing the caption.
+
+**It also gates TikZ heroes (`.tex`).** For a hero figure the script makes the one
+axis-1 call a machine can: does the `.tex` embed a **real method object** (a drawn
+distribution / scatter / decision region / graphical-model structure), or is it a
+generic boxes-and-arrows flowchart? Bare nodes + arrows with no embedded object →
+`FAIL` (the §G/§K red line). A math-bearing node map with no drawn object → `WARN`
+(fine as a §K5/T4c structure-map only if the cells carry real formulas/numbers).
 
 ---
 

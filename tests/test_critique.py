@@ -114,3 +114,51 @@ def test_exit_code_pass(tmp_path):
         (tmp_path / f"fig1_clean.{ext}").write_text("x")
     p = _write(tmp_path, CLEAN)
     assert main([str(p), "--outdir", str(tmp_path)]) == 0
+
+
+# --- TikZ hero (.tex) axis-1 critique -------------------------------------- #
+TEX_HEAD = "\\documentclass[tikz]{standalone}\n\\usetikzlibrary{arrows.meta,positioning}\n\\begin{document}\\begin{tikzpicture}\n"
+TEX_TAIL = "\n\\end{tikzpicture}\\end{document}\n"
+
+
+def _write_tex(tmp_path, body):
+    p = tmp_path / "hero.tex"
+    p.write_text(TEX_HEAD + body + TEX_TAIL, encoding="utf-8")
+    return p
+
+
+def test_tikz_real_object_passes(tmp_path):
+    body = "\\draw[blue] plot coordinates {(0,0)(1,1)(2,0)};\n\\node[draw](o){RUL 269 d};"
+    report = critique_script(_write_tex(tmp_path, body))
+    assert "PASS" in levels(report, "TX1")
+    assert report.count("FAIL") == 0
+
+
+def test_tikz_generic_flowchart_fails(tmp_path):
+    body = ("\\node[draw](a){Data};\\node[draw,right=of a](b){Model};\\node[draw,right=of b](c){Result};\n"
+            "\\draw[-{Latex}](a)--(b);\\draw[-{Latex}](b)--(c);")
+    report = critique_script(_write_tex(tmp_path, body))
+    assert "FAIL" in levels(report, "TX1")
+    assert report.worst == "FAIL"
+
+
+def test_tikz_bayesnet_passes(tmp_path):
+    body = "\\node[latent](z){$z$};\\node[obs,right=of z](x){$x$};\\edge{z}{x};\\plate{}{(z)(x)}{N};"
+    report = critique_script(_write_tex(tmp_path, body))
+    assert "PASS" in levels(report, "TX1")  # graphical model is a real method object
+
+
+def test_tikz_structure_map_warns_not_fails(tmp_path):
+    # math-bearing cells, no drawn object -> structure map -> WARN, not FAIL
+    body = ("\\node[draw](a){$i_0+\\alpha$};\\node[draw,right=of a](b){$w\\,y_m$};"
+            "\\node[draw,right=of b](c){$95\\%$ CI};\n\\draw[-{Latex}](a)--(b);")
+    report = critique_script(_write_tex(tmp_path, body))
+    assert "WARN" in levels(report, "TX1")
+    assert "FAIL" not in levels(report, "TX1")
+
+
+def test_tikz_non_standalone_warns(tmp_path):
+    p = tmp_path / "frag.tex"
+    p.write_text("\\begin{tikzpicture}\n\\draw plot coordinates {(0,0)(1,1)};\n\\end{tikzpicture}\n", encoding="utf-8")
+    report = critique_script(p)
+    assert "WARN" in levels(report, "TX0")  # not standalone -> compile-risk warning
