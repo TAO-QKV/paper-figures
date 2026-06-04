@@ -6,7 +6,7 @@ method figure, architecture figure, 技术路线图 / 模型框架图): the one 
 degenerates into a generic boxes-and-arrows flowchart (§G's most-penalized pattern)
 that reads as filler. This reference is the deep-dive for getting it right: the
 composition paradigms (§I) made concrete, with **curated external resources to
-imitate** and **two complete, compilable worked heroes** to paste from.
+imitate** and **five complete, compilable worked heroes** to paste from.
 
 > **Integrity rule (non-negotiable, = §L discipline).** Every resource below is an
 > *imitation target*, not a paste source. Borrow the **composition / palette /

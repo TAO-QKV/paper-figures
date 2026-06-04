@@ -6,6 +6,17 @@ Paste-ready, **publication-grade** figure templates for scientific papers (journ
 
 **But templates only get you to "correct".** The default target is **publication-grade — a figure a top-journal editor accepts with no revision request**, not "the data is plotted and readable". Before touching a template, read **§0b (the quality bar — what separates a publication-grade figure from an ordinary one)**; for a paper's hero / method figure read **§I (composition paradigms)**, **§J (aesthetic craft spec)**, **§K (original TikZ mechanism figures)**. Archetypes A1–A13 are the *floor*, not the ceiling.
 
+## Contents
+
+- **§0b** the quality bar — four axes (read first) · **§0a** figure contract (write before plotting) · **§0** shared style preset
+- **§A** archetypes A1–A13 (+ 48 callable functions) — the data-figure templates
+- **§B** schematics · **§C** multi-panel composition · **§D** tables → LaTeX · **§E** LaTeX figure inclusion
+- **§F** reproducibility checklist · **§G** anti-patterns (auto-penalty) · **§H** quick decision tree
+- **§I** hero/method composition paradigms P1–P6 · **§J** aesthetic craft spec · **§K** original TikZ mechanism figures
+  — for hero/framework figures, `references/framework-figures.md` is the worked deep-dive on top of these
+- **§L** external template library · **§M** Origin front-end (both optional, guard-railed)
+- Gate every figure with `scripts/critique.py` + `references/figure-critique.md` before "done".
+
 ---
 
 ## §0b The quality bar — publication-grade vs ordinary, on four axes

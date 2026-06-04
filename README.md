@@ -120,7 +120,7 @@ Think of it as: *SciencePlots-style presets, plus the judgment and building bloc
 | `.claude/skills/paper-figure-generation/SKILL.md` | the Claude skill (triggers, hard rules) |
 | `.../references/figure-cookbook.md` | **main reference**: §0b quality bar · §0a contract · §0 style · §A archetypes A1–A13 · §I composition paradigms P1–P6 · §J craft spec · §K original TikZ · §L external template library · §M Origin front-end |
 | `.../references/figure-critique.md` | the **quality gate**: operationalizes the §0b four axes + worked before→after critiques |
-| `.../references/framework-figures.md` | **framework/method-figure deep-dive**: two compilable hero examples + 3 borrowable TikZ techniques + curated resources |
+| `.../references/framework-figures.md` | **framework/method-figure deep-dive**: five compilable hero examples + borrowable TikZ techniques + curated resources |
 | `.../references/caption-and-quality.md` | caption writing + final quality checklist |
 | `scripts/critique.py` | runnable critique gate — static-analyses a figure script against the bar, exits non-zero on a hard-rule miss |
 | `scripts/_style.py` | back-compat shim → `paperfig.style` |

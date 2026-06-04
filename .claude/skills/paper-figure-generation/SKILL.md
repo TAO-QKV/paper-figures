@@ -1,6 +1,6 @@
 ---
 name: paper-figure-generation
-description: Produce publication-grade figures for scientific papers (journal/conference) — reproducible matplotlib/seaborn plots and original TikZ method/schematic figures, with a consistent style preset, three-format vector export, journal-spec aesthetics, and traceable generation. Trigger on figure, plot, chart, schematic, matplotlib, seaborn, TikZ, method figure, hero figure, publication figure, scientific figure, journal figure.
+description: Produce publication-grade figures for scientific papers — reproducible matplotlib/seaborn data figures and original TikZ method/framework/architecture figures, held to a four-axis quality bar (depth · elegance · unimpeachable · visible-gap) and exported as editable PDF+PNG+SVG with a runnable critique gate. Use this whenever a figure is destined for a paper, journal, conference submission, thesis, or report — making a plot/chart publication- or journal-ready, building a method/architecture/framework diagram or 技术路线图 (the hero figure a paper opens with), a schematic or workflow figure, or cleaning up a matplotlib/seaborn/TikZ figure that currently looks like a homework plot. Trigger even when the user never says "publication": if the figure goes into a written scientific document, this skill applies.
 ---
 
 # Paper Figure Generation
@@ -16,17 +16,17 @@ Open `references/figure-cookbook.md` and work in this order:
 3. **§0 style preset** — `from _style import paper_style, save` (the preset lives in `scripts/_style.py`). Never hand-edit rcParams per figure.
 4. **§A archetypes A1–A13** — pick the matching template (time series+CI, sorted bar, grouped bar, residual, heatmap, scatter+fit, Pareto, tornado, confusion, phase, network), paste, swap the data path + labels, run.
 
-## For a hero / method figure (the one that carries the paper)
+## For a hero / method / framework figure (the one that carries the paper)
 
-**Start here: `references/framework-figures.md`** — the deep-dive for the framework /
-method / architecture figure, with two complete compilable heroes to paste from
-(`examples/hero_tikz/pipeline_hero.tex` = §I-P1, `framework_hero.tex` = §I-P2 paradigm
-swimlanes) + the three borrowable TikZ techniques + curated journal-grade resources.
+**Read `references/framework-figures.md`** — the deep-dive, with **five** compilable heroes to
+paste from (P1 pipeline, P2 paradigm-swimlanes, + T4 graphical-model / data-tensor / matrix-fit),
+the borrowable TikZ techniques, and curated journal-grade resources.
 
-Do **not** reach for a generic boxes-and-arrows flowchart. Route:
-- **§I** composition paradigms P1–P6 (pipeline-with-hero, swimlanes, before-after diptych, distribution-flow, source-target alignment, decision-region) — pick one, embed the **real method object** (distribution / scatter / decision region), not a text label.
-- **§J** craft spec (color, type hierarchy, data-ink, white space, annotation-as-narrative, honest axes).
-- **§K** implement it as an original standalone TikZ figure, compiled to PDF then `\includegraphics` — zero compile risk to the paper.
+The rule to internalize first: **never a generic boxes-and-arrows flowchart** — embed the *real
+method object* (a distribution, a before/after scatter, a decision region), not a text label.
+Route through the cookbook: **§I** composition paradigms P1–P6 → **§J** craft spec → **§K**
+original standalone TikZ (compiled to PDF, `\includegraphics`, zero compile risk). framework-figures.md
+walks all three with worked examples.
 
 ## Hard rules (non-negotiable)
 
