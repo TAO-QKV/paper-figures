@@ -77,11 +77,14 @@
   % (a weighting w blending the two predictions), not the word "fusion" ---------
   \node[hero, right=20mm of $(mechb)!0.5!(datab)$] (fuse) {};
   \node[font=\tiny\bfseries, anchor=north, text=red!45!black] at (fuse.north) {Physics-guided fusion};
-  \begin{scope}[shift={($(fuse.center)+(0,-1mm)$)}, x=1.5mm, y=1.5mm]
-    \draw[blue!70!black, line width=0.6pt] (-7,-3) -- (7,3);        % mech prediction
-    \draw[orange!80!black, line width=0.6pt] (-7,3) -- (7,-2.5);    % data prediction
-    \draw[red!65, line width=1pt] (-7,0.2) .. controls (0,1.6) .. (7,0.6); % fused
-    \node[font=\tiny, text=red!50!black, anchor=south] at (0,1.7) {$\hat y=w\,y_{\mathrm{m}}+(1\!-\!w)y_{\mathrm{d}}$};
+  % equation pinned under the title; prediction lines confined to the lower half
+  % so the two never overlap
+  \node[font=\tiny, text=red!50!black] at ($(fuse.north)+(0,-3.6mm)$)
+        {$\hat y=w\,y_{\mathrm{m}}+(1\!-\!w)\,y_{\mathrm{d}}$};
+  \begin{scope}[shift={($(fuse.center)+(0,-2.6mm)$)}, x=1.5mm, y=1.15mm]
+    \draw[blue!70!black, line width=0.6pt] (-7,-3) -- (7,1.3);        % mech prediction
+    \draw[orange!80!black, line width=0.6pt] (-7,1.3) -- (7,-2.8);    % data prediction
+    \draw[red!65, line width=1pt] (-7,-1.2) .. controls (0,0.4) .. (7,-0.7); % fused
   \end{scope}
 
   % ============================ OUTPUT (right) ================================ %

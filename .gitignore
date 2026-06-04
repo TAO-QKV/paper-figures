@@ -30,3 +30,4 @@ examples/hero_tikz/*.pdf
 Thumbs.db
 .vscode/
 .idea/
+.obsidian/

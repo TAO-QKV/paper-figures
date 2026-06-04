@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse, FancyArrowPatch, FancyBboxPatch, Rectangle, Circle
+from matplotlib.patches import Ellipse, FancyArrowPatch, FancyBboxPatch, Rectangle, Circle, Polygon
 import paperfig as pf
 
 pf.paper_style(font="sans")
@@ -384,40 +384,43 @@ def complex_systems():
         ax_flow.add_patch(Rectangle((0.02, y), 0.96, 0.24, fc=color, ec="none", alpha=0.9))
         ax_flow.text(0.035, y + 0.215, title, fontsize=8, fontweight="bold",
                      color="#333", va="top")
-    boxes = [
-        draw_box(ax_flow, (0.08, 0.75), (0.18, 0.12), "data/processed", "CSV, matrices, images", "#dcecf8"),
-        draw_box(ax_flow, (0.33, 0.75), (0.18, 0.12), "figure contract", "claim, N, uncertainty", "#dcecf8"),
-        draw_box(ax_flow, (0.58, 0.75), (0.22, 0.12), "archetype router", "ML, omics, spatial, flow", "#dcecf8"),
-        draw_box(ax_flow, (0.10, 0.44), (0.19, 0.13), "matplotlib API", "48 callable chart types", "#f4dfc9"),
-        draw_box(ax_flow, (0.39, 0.44), (0.19, 0.13), "TikZ method layer", "mechanism, workflow, hero", "#f4dfc9"),
-        draw_box(ax_flow, (0.68, 0.44), (0.20, 0.13), "composition", "hero + insets + panels", "#f4dfc9"),
-        draw_box(ax_flow, (0.12, 0.14), (0.20, 0.13), "style preset", "journal fonts, CVD safe", "#dff0df"),
-        draw_box(ax_flow, (0.42, 0.14), (0.20, 0.13), "quality checklist", "depth, elegance, proof", "#dff0df"),
-        draw_box(ax_flow, (0.72, 0.14), (0.18, 0.13), "PDF PNG SVG", "editable + reproducible", "#dff0df"),
+    # three column-aligned tracks x three lanes -> clean orthogonal grid
+    cols, bw, bh = [0.19, 0.50, 0.80], 0.21, 0.13
+    grid = [
+        (0.75, "#dcecf8", [("data / processed", "CSV, matrices, images"),
+                           ("figure contract", "claim, N, uncertainty"),
+                           ("archetype router", "ML / omics / spatial")]),
+        (0.45, "#f4dfc9", [("matplotlib API", "48 callable charts"),
+                           ("TikZ method layer", "mechanism, hero"),
+                           ("composition", "hero + insets + panels")]),
+        (0.15, "#dff0df", [("style preset", "journal fonts, CVD-safe"),
+                           ("quality checklist", "depth, elegance, proof"),
+                           ("PDF / PNG / SVG", "editable, reproducible")]),
     ]
-    _ = boxes
-    for start, end in [((0.26, 0.81), (0.33, 0.81)), ((0.51, 0.81), (0.58, 0.81)),
-                       ((0.69, 0.75), (0.22, 0.57)), ((0.69, 0.75), (0.49, 0.57)),
-                       ((0.69, 0.75), (0.78, 0.57)), ((0.20, 0.44), (0.22, 0.27)),
-                       ((0.49, 0.44), (0.52, 0.27)), ((0.78, 0.44), (0.81, 0.27)),
-                       ((0.62, 0.20), (0.72, 0.20))]:
-        arrow(ax_flow, start, end)
-    # Mini diagnostic charts embedded in the architecture boxes.
-    ax_mini = ax_flow.inset_axes([0.115, 0.463, 0.11, 0.05])
-    ax_mini.plot(np.linspace(0, 1, 20), np.exp(-np.linspace(0, 3, 20)), color=pf.PALETTE[0], lw=1.2)
-    ax_mini.fill_between(np.linspace(0, 1, 20), 0.15, 0.45, color=pf.PALETTE[1], alpha=0.12)
-    ax_mini.axis("off")
-    ax_mini2 = ax_flow.inset_axes([0.805, 0.492, 0.055, 0.038])
-    ax_mini2.imshow(rng.normal(0, 1, (5, 8)), cmap="RdBu_r", aspect="auto")
-    ax_mini2.axis("off")
-    ax_flow.text(0.035, 0.02, "hard guardrails: no inline data > 20 rows, one style preset, three-format vector export",
+    for y, color, items in grid:
+        for cx, (t, s) in zip(cols, items):
+            draw_box(ax_flow, (cx - bw / 2, y), (bw, bh), t, s, color)
+    # 6 vertical arrows (per track, between lanes) — no diagonals, no crossings
+    for cx in cols:
+        arrow(ax_flow, (cx, 0.75), (cx, 0.58))   # data sources -> figure engine
+        arrow(ax_flow, (cx, 0.45), (cx, 0.28))   # figure engine -> journal QA
+    ax_flow.text(0.035, 0.025, "hard guardrails: no inline data > 20 rows  ·  one style preset  ·  three-format vector export",
                  fontsize=8, color="#444")
 
-    pf.sankey([18, -6.5, -4.2, -3.6, -2.1],
-              ["requests", "data", "ML", "schematic", "revision"],
-              orientations=[0, 1, -1, 1, -1], gap=0.58,
-              pathlengths=0.82, ax=ax_sankey)
-    ax_sankey.set_title("B  request flow", loc="left", fontweight="bold")
+    # a clean centered funnel reads better than a single-node Sankey in a small cell
+    ax_sankey.set_axis_off(); ax_sankey.set_xlim(0, 1); ax_sankey.set_ylim(0, 1)
+    ax_sankey.set_title("B  request funnel", loc="left", fontweight="bold")
+    funnel = [("requests", 1.00), ("drafts", 0.74), ("revisions", 0.58), ("exports", 0.49)]
+    n = len(funnel); ytop, ybot = 0.82, 0.05; band = (ytop - ybot) / n
+    fr = [f for _, f in funnel] + [funnel[-1][1] * 0.82]
+    for i, (name, frac) in enumerate(funnel):
+        y1 = ytop - i * band; y0 = y1 - band * 0.80
+        w0, w1 = fr[i] * 0.80, fr[i + 1] * 0.80
+        ax_sankey.add_patch(Polygon(
+            [(0.5 - w0 / 2, y1), (0.5 + w0 / 2, y1), (0.5 + w1 / 2, y0), (0.5 - w1 / 2, y0)],
+            closed=True, fc=pf.PALETTE[i % len(pf.PALETTE)], ec="white", lw=1.0, alpha=0.85))
+        ax_sankey.text(0.5, (y0 + y1) / 2, f"{name}  {int(frac * 100)}", ha="center",
+                       va="center", fontsize=7.2, color="white", fontweight="bold")
     M = np.array([[0, 6, 4, 2], [6, 0, 3, 5], [4, 3, 0, 4], [2, 5, 4, 0]], float)
     pf.chord(M, labels=["stats", "ML", "image", "mechanism"], ax=ax_chord)
     ax_chord.set_title("C  chart-family coupling", loc="left", fontweight="bold")
@@ -465,7 +468,7 @@ def complex_systems():
     ax_venn.set_title("H  coverage overlap", loc="left", fontweight="bold")
     aa, bb, cc = rng.dirichlet([2.6, 2.2, 4.8], 120).T
     pf.ternary(aa, bb, cc, values=cc, labels=("data", "method", "claim"), ax=ax_tern)
-    ax_tern.set_title("I  composition trade-space", loc="left", fontweight="bold")
+    ax_tern.set_title("I  composition trade-space", loc="left", fontweight="bold", pad=14)
     pf.slopegraph([0.28, 0.42, 0.33, 0.51], [0.78, 0.72, 0.69, 0.88],
                   ["depth", "elegance", "proof", "gap"],
                   left="ordinary", right="paperfig", ax=ax_slope)
