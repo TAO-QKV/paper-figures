@@ -182,5 +182,10 @@ def test_shipped_exemplars_clear_their_own_gate(rel):
     if not path.exists():
         pytest.skip(f"{rel} not present")
     report = critique_script(path, outdir=ROOT / "examples")
-    fails = [f"[{f.check}] {f.msg}" for f in report.findings if f.level == "FAIL"]
+    # Guard the figure's *intrinsic* quality (reproducibility / axis-1 / style),
+    # not artifact presence: the committed repo gitignores the vector PDF/SVG
+    # (regenerable, built on demand), so an "artifact" FAIL just means they aren't
+    # checked out — which is the intended state, not a quality defect.
+    fails = [f"[{f.check}] {f.msg}" for f in report.findings
+             if f.level == "FAIL" and f.axis != "artifact"]
     assert not fails, f"{rel} fails its own critique gate: {fails}"
