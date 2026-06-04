@@ -1,0 +1,22 @@
+[
+  {"query": "i've got my experiment results in results/runs.csv (cols: epoch, train_loss, val_loss, val_acc) and i'm writing this up for NeurIPS — make a training-curve figure that actually looks like it belongs in the paper, not the default blue matplotlib line", "should_trigger": true},
+  {"query": "need a model architecture diagram for the methods section of my thesis — it's an encoder, a fusion module (the novel bit), and two prediction heads. should look professional, not a generic boxes-and-arrows thing", "should_trigger": true},
+  {"query": "我在写数模论文，要一张技术路线图/模型框架图，从数据预处理到模型再到结果，要好看一点、能放进论文正文", "should_trigger": true},
+  {"query": "this matplotlib bar chart looks like crap for submission — gridlines everywhere, tiny font, no error bars. it compares 4 methods' F1 with std. fix it so a reviewer takes it seriously (script is in scripts/fig_f1.py)", "should_trigger": true},
+  {"query": "draw a schematic of our pipeline: raw sensor data -> CORAL domain alignment -> RUL prediction. the alignment is our contribution so it should be front and center, not a box labelled 'domain adaptation'", "should_trigger": true},
+  {"query": "i have a degradation dataset and want a results-section figure showing the predicted remaining-useful-life trajectory with a 95% confidence band and the failure threshold marked", "should_trigger": true},
+  {"query": "make a publication-ready heatmap of the sensitivity matrix in data/processed/sens.csv — it's going into an Elsevier journal so it needs to match their single-column width", "should_trigger": true},
+  {"query": "the hero figure for our Cell submission needs the response manifold with decision regions shaded, plus volcano + manhattan omics panels as supporting evidence — one integrated figure", "should_trigger": true},
+  {"query": "draw a Bayesian graphical model for my generative-model section: a global rate beta, a per-unit latent state, observed measurements, plated over time and units", "should_trigger": true},
+  {"query": "i need a clean color-coded TikZ diagram of a 3-layer neural net for my paper, not one of those ugly default ones", "should_trigger": true},
+  {"query": "can you throw up a quick matplotlib plot of my loss curve real fast so i can eyeball whether training converged? doesn't need to be pretty at all", "should_trigger": false},
+  {"query": "i have a .pptx deck and need to pull the chart out of slide 6 and drop it into an email to my manager", "should_trigger": false},
+  {"query": "build me an interactive dashboard to monitor our model's live inference latency and throughput, with auto-refresh every few seconds", "should_trigger": false},
+  {"query": "draw a UML class diagram for this codebase showing the inheritance between the model classes in src/models/", "should_trigger": false},
+  {"query": "this xlsx has my survey results — add a column computing NPS and make a pivot table of responses by region", "should_trigger": false},
+  {"query": "extract all the figures as images from this PDF paper i downloaded so i can flip through them", "should_trigger": false},
+  {"query": "i need a flowchart of our company's customer onboarding process for the internal wiki", "should_trigger": false},
+  {"query": "convert my existing matplotlib figure to a high-res PNG at 600 dpi", "should_trigger": false},
+  {"query": "what's a better colormap for a correlation heatmap, viridis or RdBu? just curious", "should_trigger": false},
+  {"query": "draw a cute cartoon mascot for our project's README header", "should_trigger": false}
+]
