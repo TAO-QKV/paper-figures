@@ -96,3 +96,13 @@ def test_save_three_formats(tmp_path):
     pf.save(fig, "t", outdir=str(tmp_path))
     for ext in ("pdf", "png", "svg"):
         assert (tmp_path / f"t.{ext}").exists()
+
+
+def test_save_journal_formats(tmp_path):
+    # high-impact journals often require TIFF / EPS at submission; save() can
+    # export them with a dpi override for line art (600+).
+    t = np.linspace(0, 1, 10)
+    fig, _ = pf.timeseries_ci(t, t, t, t - 0.1, t + 0.1)
+    pf.save(fig, "j", outdir=str(tmp_path), formats=("pdf", "tiff", "eps"), dpi=600)
+    for ext in ("pdf", "tiff", "eps"):
+        assert (tmp_path / f"j.{ext}").exists()

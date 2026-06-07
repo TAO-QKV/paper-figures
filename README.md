@@ -129,7 +129,7 @@ Think of it as: *SciencePlots-style presets, plus the judgment and building bloc
 
 ## Hard rules
 
-Reproducible (a script reads data from a file; no inline data > 20 rows; no AI-generated images) · vector three-format (PDF + PNG + SVG) · style preset called once · colorblind- and grayscale-safe · units / N / uncertainty on the figure · pass the §0b four axes + §F reproducibility checklist before "done".
+Reproducible (a script reads data from a file; no inline data > 20 rows; no AI-generated images) · vector three-format (PDF + PNG + SVG; plus TIFF/EPS at journal submission via `save(fig, name, formats=('pdf','tiff'), dpi=600)`) · style preset called once · colorblind- and grayscale-safe · units / N / uncertainty on the figure · pass the §0b four axes + §F reproducibility checklist before "done".
 
 These are **enforced, not just exhorted**: `python scripts/critique.py scripts/figN_<name>.py` static-analyses a figure script against the bar — hard-rule misses (no uncertainty, jet colormap, equal grid, default style, PNG-only) come back as `FAIL` (non-zero exit, so it gates CI), and the judgment-half (does the figure argue a mechanism? does one hero panel dominate? B&W-legible?) prints as prompts you answer by hand. See [`references/figure-critique.md`](.claude/skills/paper-figure-generation/references/figure-critique.md).
 

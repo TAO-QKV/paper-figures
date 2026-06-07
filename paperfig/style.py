@@ -110,9 +110,18 @@ def paper_style(font: str = "sans", journal: str = None, tex: bool = False,
 
 
 def save(fig, name: str, outdir: str = "outputs/figures",
-         formats=("pdf", "png", "svg")):
-    """Save a figure as PDF (vector) + PNG (raster) + SVG (editable text)."""
+         formats=("pdf", "png", "svg"), dpi=None):
+    """Save a figure in several formats.
+
+    Default: PDF (vector) + PNG (raster) + SVG (editable text). For a journal that
+    mandates raster line art or EPS at submission, ask for them explicitly —
+    ``save(fig, name, formats=("pdf", "tiff"), dpi=600)`` (many high-impact journals
+    require TIFF; Nature/Science want ~300 dpi for photos, 600+ for line art) or add
+    ``"eps"``. TIFF needs Pillow. ``dpi`` overrides the preset's 300 for that export.
+    """
     Path(outdir).mkdir(parents=True, exist_ok=True)
+    kw = {"dpi": dpi} if dpi else {}
     for ext in formats:
-        fig.savefig(f"{outdir}/{name}.{ext}")
-    print(f"[fig] saved {outdir}/{name}.{{{','.join(formats)}}}")
+        fig.savefig(f"{outdir}/{name}.{ext}", **kw)
+    print(f"[fig] saved {outdir}/{name}.{{{','.join(formats)}}}"
+          + (f" @ {dpi} dpi" if dpi else ""))

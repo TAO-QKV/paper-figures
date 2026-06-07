@@ -100,6 +100,7 @@ What the preset guarantees (so you never hand-tune rcParams per figure):
 - **Colorblind-safe palette** (`PALETTE`, Wong-derived) + `MARKERS` + `LINESTYLES` for redundant B&W-legible encoding.
 - Soft near-black ink (not pure `#000`), top/right spines off, ticks inward, minor ticks on, subtle grid behind data, semi-opaque legend box, `axes.unicode_minus=False`.
 - Three-format export via `save()` (PDF + PNG + SVG); override with `save(fig, name, formats=('pdf',))`.
+- **Journal submission formats**: many high-impact journals (Nature / Science / Cell / IEEE) require raster line art as **TIFF** (and sometimes **EPS**) at submission. `save(fig, name, formats=('pdf', 'tiff'), dpi=600)` exports them — keep the editable PDF/SVG for yourself, hand the journal the TIFF/EPS it asks for (≈300 dpi for photos, 600+ for line art; check the target journal's author guidelines). TIFF needs Pillow.
 
 > The base look is `paperfig/paperfig.mplstyle` (single source of truth); the archetype snippets below `from _style import …` via a back-compat shim, which forwards to `paperfig`.
 
