@@ -60,8 +60,9 @@ _JOURNAL = {k: _journal_rc(w, b) for k, (w, b) in _JOURNAL_SPEC.items()}
 def register_style():
     """Register the bundled style so ``plt.style.use('paperfig')`` works."""
     try:
-        lib = _mstyle.core.read_style_directory(str(STYLE_PATH.parent))
-        _mstyle.library.update(lib)
+        _mstyle.library["paperfig"] = mpl.rc_params_from_file(
+            str(STYLE_PATH), use_default_template=False
+        )
         _mstyle.available[:] = sorted(_mstyle.library.keys())
     except Exception:
         pass  # registration is a convenience; paper_style still works via path
