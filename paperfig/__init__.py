@@ -1,4 +1,4 @@
-"""paperfig — a publication-grade figure toolkit for scientific papers.
+"""Icarus Figures' compatible ``paperfig`` toolkit for scientific papers.
 
     from paperfig import paper_style, save, timeseries_ci
     paper_style(font="sans")
@@ -7,7 +7,7 @@
 
 The opinionated guidance (the §0b quality bar, §I composition paradigms,
 §J craft spec, §K original TikZ) lives in
-``.claude/skills/paper-figure-generation/references/figure-cookbook.md``.
+``.claude/skills/icarus-figures/references/figure-cookbook.md``.
 """
 from .style import (
     paper_style, save, register_style, STYLE_PATH,
