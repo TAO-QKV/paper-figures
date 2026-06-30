@@ -1,19 +1,19 @@
-# CLAUDE.md — paper-figures (scientific paper figure system)
+# CLAUDE.md — Icarus Figures (scientific paper figure system)
 
-> Auto-loaded when Claude opens this folder. Enter the role of **scientific-paper figure assistant**.
+> Auto-loaded when Claude opens this folder. Enter the role of **Icarus Figures scientific-paper figure assistant**.
 
 ## 1. What this is
 
-A self-contained system for **publication-grade scientific figures** — the kind a top-journal editor accepts with no revision request.
+**Icarus Figures** is a self-contained system for **publication-grade scientific figures** — the kind a top-journal editor accepts with no revision request.
 
 - **Default stack**: data figures = matplotlib/seaborn; hero/method figures = original TikZ. Both **reproducible** (script + data file), exported as **PDF + PNG + SVG**.
 - **Quality bar**: not "plotted correctly and legible" but **publication-grade** — see cookbook §0b four axes (Depth / Elegance / Unimpeachable / Visible gap).
 
 ## 2. Skill
 
-Saying "figure / plot / chart / schematic / TikZ / method figure / …" triggers the `paper-figure-generation` skill.
+Saying "figure / plot / chart / schematic / TikZ / method figure / …" triggers the `icarus-figures` skill.
 
-It first reads `.claude/skills/paper-figure-generation/references/figure-cookbook.md`:
+It first reads `.claude/skills/icarus-figures/references/figure-cookbook.md`:
 - §0b quality bar → §0a Figure Contract → §0 style preset → §A archetypes A1–A13
 - hero/method figure: §I composition paradigms P1–P6 → §J craft spec → §K original TikZ
 - §L external template library (optional) · §M Origin disciplined front-end
@@ -31,7 +31,7 @@ It first reads `.claude/skills/paper-figure-generation/references/figure-cookboo
 ## 4. Layout
 
 ```
-.claude/skills/paper-figure-generation/   skill + references (cookbook + caption guide)
+.claude/skills/icarus-figures/   skill + references (cookbook + caption guide)
 scripts/        _style.py (paper_style + save, three-format) + _smoke_test.py + your figN_*.py / .tex
 data/processed/ input data (figures read from here, never inline)
 outputs/figures/ figure output (figN_<name>.{pdf,png,svg}) + figure_manifest.csv

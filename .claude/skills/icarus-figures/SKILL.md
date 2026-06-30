@@ -1,9 +1,9 @@
 ---
-name: paper-figure-generation
-description: Produce publication-grade figures for scientific papers — reproducible matplotlib/seaborn data figures and original TikZ method/framework/architecture figures, held to a four-axis quality bar (depth · elegance · unimpeachable · visible-gap) and exported as editable PDF+PNG+SVG with a runnable critique gate. Use this whenever a figure is destined for a paper, journal, conference submission, thesis, or report — making a plot/chart publication- or journal-ready, building a method/architecture/framework diagram or 技术路线图 (the hero figure a paper opens with), a schematic or workflow figure, or cleaning up a matplotlib/seaborn/TikZ figure that currently looks like a homework plot. Trigger even when the user never says "publication": if the figure goes into a written scientific document, this skill applies.
+name: icarus-figures
+description: Icarus Figures produces publication-grade figures for scientific papers — reproducible matplotlib/seaborn data figures and original TikZ method/framework/architecture figures, held to a four-axis quality bar (depth · elegance · unimpeachable · visible-gap) and exported as editable PDF+PNG+SVG with a runnable critique gate. Use this whenever a figure is destined for a paper, journal, conference submission, thesis, or report — making a plot/chart publication- or journal-ready, building a method/architecture/framework diagram or 技术路线图 (the hero figure a paper opens with), a schematic or workflow figure, or cleaning up a matplotlib/seaborn/TikZ figure that currently looks like a homework plot. Trigger even when the user never says "publication": if the figure goes into a written scientific document, this skill applies.
 ---
 
-# Paper Figure Generation
+# Icarus Figures
 
 Turn a dataset + a claim into a **publication-grade figure** — one a top-journal editor accepts with no revision request. Default stack: **matplotlib/seaborn for data figures, original TikZ for hero/method figures**, both reproducible (script + data file), exported as PDF + PNG + SVG.
 
