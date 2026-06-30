@@ -1,6 +1,6 @@
 # Icarus Figures — publication-grade scientific figures for papers
 
-[![CI](https://github.com/TAO-QKV/paper-figures/actions/workflows/ci.yml/badge.svg)](https://github.com/TAO-QKV/paper-figures/actions/workflows/ci.yml)
+[![CI](https://github.com/TAO-QKV/Icarus-Figures/actions/workflows/ci.yml/badge.svg)](https://github.com/TAO-QKV/Icarus-Figures/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)
 ![matplotlib](https://img.shields.io/badge/matplotlib-%E2%89%A53.6-11557c.svg)
